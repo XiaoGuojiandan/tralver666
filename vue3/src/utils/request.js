@@ -203,8 +203,13 @@ service.interceptors.response.use(
 
 // 扩展请求方法
 const request = {
-  get(url, params, config = {}) {
-    return service.get(url, { params, ...config })
+  get(url, params = {}, config = {}) {
+    return service({
+      url,
+      method: 'get',
+      params,
+      ...config
+    })
   },
   
   post(url, data, config = {}) {

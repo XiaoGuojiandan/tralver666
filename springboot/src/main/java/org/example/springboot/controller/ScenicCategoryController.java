@@ -1,5 +1,6 @@
 package org.example.springboot.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -10,9 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "景点分类接口")
+import java.util.List;
+
 @RestController
 @RequestMapping("/scenic-category")
+@Tag(name = "景点分类管理")
 public class ScenicCategoryController {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ScenicCategoryController.class);
@@ -29,46 +32,33 @@ public class ScenicCategoryController {
         return Result.success(scenicCategoryService.getCategoriesByPage(name, currentPage, size));
     }
     
-    @Operation(summary = "获取分类树")
     @GetMapping("/tree")
-    public Result<?> getCategoryTree() {
-        return Result.success(scenicCategoryService.getCategoryTree());
+    @Operation(summary = "获取分类树")
+    public Result<List<ScenicCategory>> tree() {
+        return Result.success(scenicCategoryService.getTree());
     }
     
-    @Operation(summary = "获取分类详情")
     @GetMapping("/{id}")
-    public Result<?> getCategoryById(@PathVariable Long id) {
-        return Result.success(scenicCategoryService.getCategoryById(id));
+    @Operation(summary = "获取分类详情")
+    public Result<ScenicCategory> getById(@PathVariable Long id) {
+        return Result.success(scenicCategoryService.getById(id));
     }
     
-    @Operation(summary = "添加分类")
     @PostMapping
-    public Result<?> addCategory(@RequestBody ScenicCategory category) {
-        if (scenicCategoryService.addCategory(category)) {
-            return Result.success();
-        } else {
-            return Result.error("添加分类失败");
-        }
+    @Operation(summary = "新增分类")
+    public Result<Boolean> add(@RequestBody ScenicCategory category) {
+        return Result.success(scenicCategoryService.addCategory(category));
     }
     
+    @PutMapping
     @Operation(summary = "更新分类")
-    @PutMapping("/{id}")
-    public Result<?> updateCategory(@PathVariable Long id, @RequestBody ScenicCategory category) {
-        category.setId(id);
-        if (scenicCategoryService.updateCategory(category)) {
-            return Result.success();
-        } else {
-            return Result.error("更新分类失败");
-        }
+    public Result<Boolean> update(@RequestBody ScenicCategory category) {
+        return Result.success(scenicCategoryService.updateCategory(category));
     }
     
-    @Operation(summary = "删除分类")
     @DeleteMapping("/{id}")
-    public Result<?> deleteCategory(@PathVariable Long id) {
-        if (scenicCategoryService.deleteCategory(id)) {
-            return Result.success();
-        } else {
-            return Result.error("删除失败，请确保该分类下没有子分类");
-        }
+    @Operation(summary = "删除分类")
+    public Result<Boolean> delete(@PathVariable Long id) {
+        return Result.success(scenicCategoryService.deleteCategory(id));
     }
 } 

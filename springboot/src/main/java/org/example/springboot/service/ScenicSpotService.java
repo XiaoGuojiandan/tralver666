@@ -79,7 +79,7 @@ public class ScenicSpotService {
         
         // 填充分类信息
         if (spot.getCategoryId() != null) {
-            spot.setCategoryInfo(scenicCategoryService.getCategoryById(spot.getCategoryId()));
+            spot.setCategory(scenicCategoryService.getById(spot.getCategoryId()));
         }
         
         return spot;
@@ -88,7 +88,7 @@ public class ScenicSpotService {
     public void createScenicSpot(ScenicSpot spot) {
         // 验证分类是否存在
         if (spot.getCategoryId() != null) {
-            ScenicCategory category = scenicCategoryService.getCategoryById(spot.getCategoryId());
+            ScenicCategory category = scenicCategoryService.getById(spot.getCategoryId());
             if (category == null) {
                 throw new ServiceException("所选分类不存在");
             }
@@ -103,7 +103,7 @@ public class ScenicSpotService {
         
         // 验证分类是否存在
         if (spot.getCategoryId() != null) {
-            ScenicCategory category = scenicCategoryService.getCategoryById(spot.getCategoryId());
+            ScenicCategory category = scenicCategoryService.getById(spot.getCategoryId());
             if (category == null) {
                 throw new ServiceException("所选分类不存在");
             }
@@ -153,7 +153,7 @@ public class ScenicSpotService {
         // 填充分类信息
         spots.forEach(spot -> {
             if (spot.getCategoryId() != null && categoryMap.containsKey(spot.getCategoryId())) {
-                spot.setCategoryInfo(categoryMap.get(spot.getCategoryId()));
+                spot.setCategory(categoryMap.get(spot.getCategoryId()));
             }
         });
     }
@@ -230,5 +230,40 @@ public class ScenicSpotService {
         }
 
         return result;
+    }
+
+    /**
+     * 分页查询景点
+     */
+    public Page<ScenicSpot> page(Page<ScenicSpot> page, LambdaQueryWrapper<ScenicSpot> wrapper) {
+        Page<ScenicSpot> result = scenicSpotMapper.selectPage(page, wrapper);
+        // 填充分类信息
+        result.getRecords().forEach(spot -> {
+            if (spot.getCategoryId() != null) {
+                spot.setCategory(scenicCategoryService.getById(spot.getCategoryId()));
+            }
+        });
+        return result;
+    }
+    
+    /**
+     * 新增景点
+     */
+    public boolean save(ScenicSpot scenicSpot) {
+        return scenicSpotMapper.insert(scenicSpot) > 0;
+    }
+    
+    /**
+     * 更新景点
+     */
+    public boolean updateById(ScenicSpot scenicSpot) {
+        return scenicSpotMapper.updateById(scenicSpot) > 0;
+    }
+    
+    /**
+     * 删除景点
+     */
+    public boolean removeById(Long id) {
+        return scenicSpotMapper.deleteById(id) > 0;
     }
 }

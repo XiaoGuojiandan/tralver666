@@ -1,11 +1,14 @@
 package org.example.springboot.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.example.springboot.common.Result;
 import org.example.springboot.entity.ScenicSpot;
+import org.example.springboot.service.ScenicCategoryService;
 import org.example.springboot.service.ScenicSpotService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,16 +25,31 @@ public class ScenicSpotController {
     @Resource
     private ScenicSpotService scenicSpotService;
 
+    @Resource
+    private ScenicCategoryService scenicCategoryService;
+
     @Operation(summary = "分页查询景点")
     @GetMapping("/page")
-    public Result<?> getScenicSpotsByPage(
-            @RequestParam(defaultValue = "") String name,
-            @RequestParam(defaultValue = "") String location,
-            @RequestParam(defaultValue = "") String category,
-            @RequestParam(required = false) Long categoryId,
+    public Result<Page<ScenicSpot>> page(
             @RequestParam(defaultValue = "1") Integer currentPage,
-            @RequestParam(defaultValue = "10") Integer size) {
-        Page<ScenicSpot> page = scenicSpotService.getScenicSpotsByPage(name, location,  categoryId, currentPage, size);
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long categoryId) {
+        
+        LambdaQueryWrapper<ScenicSpot> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StringUtils.isNotBlank(name), ScenicSpot::getName, name)
+                   .eq(categoryId != null, ScenicSpot::getCategoryId, categoryId)
+                   .orderByDesc(ScenicSpot::getCreateTime);
+        
+        Page<ScenicSpot> page = scenicSpotService.page(new Page<>(currentPage, size), queryWrapper);
+        
+        // 填充分类信息
+        page.getRecords().forEach(spot -> {
+            if (spot.getCategoryId() != null) {
+                spot.setCategory(scenicCategoryService.getById(spot.getCategoryId()));
+            }
+        });
+        
         return Result.success(page);
     }
 
