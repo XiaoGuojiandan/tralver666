@@ -90,17 +90,14 @@ const getCityEmoji = (cityName) => {
 
 <style lang="scss" scoped>
 .city-sidebar-container {
-  width: 240px;
+  width: 280px;
   background: white;
   border-radius: 20px;
   padding: 24px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(231, 235, 238, 0.8);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    box-shadow: 0 6px 40px rgba(0, 0, 0, 0.08);
-  }
+  position: sticky;
+  top: 20px;
 }
 
 .sidebar-header {
@@ -157,34 +154,10 @@ const getCityEmoji = (cityName) => {
 }
 
 .city-list {
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: calc(100vh - 300px);
-  overflow-y: auto;
-  padding-right: 4px;
-
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-    
-    &:hover {
-      background: #94a3b8;
-    }
-  }
-
-  &.has-search {
-    max-height: calc(100vh - 340px);
-  }
 }
 
 .city-item {
@@ -194,27 +167,32 @@ const getCityEmoji = (cityName) => {
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: #f8fafc;
-  border: 1px solid transparent;
+  gap: 8px;
+  font-size: 15px;
+  color: #64748b;
 
   &:hover {
-    background: #f1f5f9;
-    transform: translateY(-1px);
+    background: #f8fafc;
+    transform: translateX(4px);
   }
 
   &.active {
     background: #eff6ff;
-    border-color: #3b82f6;
-    color: #1d4ed8;
+    color: #3b82f6;
+    font-weight: 500;
+  }
 
-    .city-count {
-      color: #3b82f6;
-    }
+  .city-icon {
+    font-size: 18px;
+  }
 
-    .el-icon {
-      color: #3b82f6;
-    }
+  .city-name {
+    flex: 1;
+  }
+
+  .city-count {
+    font-size: 13px;
+    color: #94a3b8;
   }
 }
 
@@ -224,27 +202,10 @@ const getCityEmoji = (cityName) => {
   gap: 12px;
 }
 
-.city-icon {
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.city-name {
-  font-size: 15px;
-  font-weight: 500;
-}
-
 .city-meta {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.city-count {
-  font-size: 13px;
-  color: #64748b;
 }
 
 @keyframes slideIn {
