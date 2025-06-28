@@ -11,7 +11,7 @@
  Target Server Version : 80027 (8.0.27)
  File Encoding         : 65001
 
- Date: 28/06/2025 22:19:19
+ Date: 29/06/2025 00:54:30
 */
 
 SET NAMES utf8mb4;
@@ -203,95 +203,49 @@ CREATE TABLE `scenic_category`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `region` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '所属区域',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 89 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '景点分类表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 143 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '景点分类表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of scenic_category
 -- ----------------------------
-INSERT INTO `scenic_category` VALUES (1, '南宁市景点', '南宁市著名旅游景点', NULL, 0, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '南宁市');
-INSERT INTO `scenic_category` VALUES (2, '桂林市景点', '桂林市著名旅游景点', NULL, 0, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '桂林市');
-INSERT INTO `scenic_category` VALUES (3, '柳州市景点', '柳州市著名旅游景点', NULL, 0, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '柳州市');
-INSERT INTO `scenic_category` VALUES (4, '梧州市景点', '梧州市著名旅游景点', NULL, 0, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '梧州市');
-INSERT INTO `scenic_category` VALUES (5, '北海市景点', '北海市著名旅游景点', NULL, 0, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '北海市');
-INSERT INTO `scenic_category` VALUES (6, '防城港市景点', '防城港市著名旅游景点', NULL, 0, 6, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '防城港市');
-INSERT INTO `scenic_category` VALUES (7, '钦州市景点', '钦州市著名旅游景点', NULL, 0, 7, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '钦州市');
-INSERT INTO `scenic_category` VALUES (8, '贵港市景点', '贵港市著名旅游景点', NULL, 0, 8, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贵港市');
-INSERT INTO `scenic_category` VALUES (9, '玉林市景点', '玉林市著名旅游景点', NULL, 0, 9, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '玉林市');
-INSERT INTO `scenic_category` VALUES (10, '百色市景点', '百色市著名旅游景点', NULL, 0, 10, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '百色市');
-INSERT INTO `scenic_category` VALUES (11, '贺州市景点', '贺州市著名旅游景点', NULL, 0, 11, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贺州市');
-INSERT INTO `scenic_category` VALUES (12, '河池市景点', '河池市著名旅游景点', NULL, 0, 12, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '河池市');
-INSERT INTO `scenic_category` VALUES (13, '来宾市景点', '来宾市著名旅游景点', NULL, 0, 13, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '来宾市');
-INSERT INTO `scenic_category` VALUES (14, '崇左市景点', '崇左市著名旅游景点', NULL, 0, 14, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '崇左市');
-INSERT INTO `scenic_category` VALUES (15, '自然风光', '南宁市自然风光景区', NULL, 1, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '南宁市');
-INSERT INTO `scenic_category` VALUES (16, '自然风光', '桂林市自然风光景区', NULL, 2, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '桂林市');
-INSERT INTO `scenic_category` VALUES (17, '自然风光', '柳州市自然风光景区', NULL, 3, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '柳州市');
-INSERT INTO `scenic_category` VALUES (18, '自然风光', '梧州市自然风光景区', NULL, 4, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '梧州市');
-INSERT INTO `scenic_category` VALUES (19, '自然风光', '北海市自然风光景区', NULL, 5, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '北海市');
-INSERT INTO `scenic_category` VALUES (20, '自然风光', '防城港市自然风光景区', NULL, 6, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '防城港市');
-INSERT INTO `scenic_category` VALUES (21, '自然风光', '钦州市自然风光景区', NULL, 7, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '钦州市');
-INSERT INTO `scenic_category` VALUES (22, '自然风光', '贵港市自然风光景区', NULL, 8, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贵港市');
-INSERT INTO `scenic_category` VALUES (23, '自然风光', '玉林市自然风光景区', NULL, 9, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '玉林市');
-INSERT INTO `scenic_category` VALUES (24, '自然风光', '百色市自然风光景区', NULL, 10, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '百色市');
-INSERT INTO `scenic_category` VALUES (25, '自然风光', '贺州市自然风光景区', NULL, 11, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贺州市');
-INSERT INTO `scenic_category` VALUES (26, '自然风光', '河池市自然风光景区', NULL, 12, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '河池市');
-INSERT INTO `scenic_category` VALUES (27, '自然风光', '来宾市自然风光景区', NULL, 13, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '来宾市');
-INSERT INTO `scenic_category` VALUES (28, '自然风光', '崇左市自然风光景区', NULL, 14, 1, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '崇左市');
-INSERT INTO `scenic_category` VALUES (30, '人文古迹', '南宁市历史文化景区', NULL, 1, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '南宁市');
-INSERT INTO `scenic_category` VALUES (31, '人文古迹', '桂林市历史文化景区', NULL, 2, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '桂林市');
-INSERT INTO `scenic_category` VALUES (32, '人文古迹', '柳州市历史文化景区', NULL, 3, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '柳州市');
-INSERT INTO `scenic_category` VALUES (33, '人文古迹', '梧州市历史文化景区', NULL, 4, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '梧州市');
-INSERT INTO `scenic_category` VALUES (34, '人文古迹', '北海市历史文化景区', NULL, 5, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '北海市');
-INSERT INTO `scenic_category` VALUES (35, '人文古迹', '防城港市历史文化景区', NULL, 6, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '防城港市');
-INSERT INTO `scenic_category` VALUES (36, '人文古迹', '钦州市历史文化景区', NULL, 7, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '钦州市');
-INSERT INTO `scenic_category` VALUES (37, '人文古迹', '贵港市历史文化景区', NULL, 8, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贵港市');
-INSERT INTO `scenic_category` VALUES (38, '人文古迹', '玉林市历史文化景区', NULL, 9, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '玉林市');
-INSERT INTO `scenic_category` VALUES (39, '人文古迹', '百色市历史文化景区', NULL, 10, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '百色市');
-INSERT INTO `scenic_category` VALUES (40, '人文古迹', '贺州市历史文化景区', NULL, 11, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贺州市');
-INSERT INTO `scenic_category` VALUES (41, '人文古迹', '河池市历史文化景区', NULL, 12, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '河池市');
-INSERT INTO `scenic_category` VALUES (42, '人文古迹', '来宾市历史文化景区', NULL, 13, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '来宾市');
-INSERT INTO `scenic_category` VALUES (43, '人文古迹', '崇左市历史文化景区', NULL, 14, 2, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '崇左市');
-INSERT INTO `scenic_category` VALUES (45, '民族风情', '南宁市民族特色景区', NULL, 1, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '南宁市');
-INSERT INTO `scenic_category` VALUES (46, '民族风情', '桂林市民族特色景区', NULL, 2, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '桂林市');
-INSERT INTO `scenic_category` VALUES (47, '民族风情', '柳州市民族特色景区', NULL, 3, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '柳州市');
-INSERT INTO `scenic_category` VALUES (48, '民族风情', '梧州市民族特色景区', NULL, 4, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '梧州市');
-INSERT INTO `scenic_category` VALUES (49, '民族风情', '北海市民族特色景区', NULL, 5, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '北海市');
-INSERT INTO `scenic_category` VALUES (50, '民族风情', '防城港市民族特色景区', NULL, 6, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '防城港市');
-INSERT INTO `scenic_category` VALUES (51, '民族风情', '钦州市民族特色景区', NULL, 7, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '钦州市');
-INSERT INTO `scenic_category` VALUES (52, '民族风情', '贵港市民族特色景区', NULL, 8, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贵港市');
-INSERT INTO `scenic_category` VALUES (53, '民族风情', '玉林市民族特色景区', NULL, 9, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '玉林市');
-INSERT INTO `scenic_category` VALUES (54, '民族风情', '百色市民族特色景区', NULL, 10, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '百色市');
-INSERT INTO `scenic_category` VALUES (55, '民族风情', '贺州市民族特色景区', NULL, 11, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贺州市');
-INSERT INTO `scenic_category` VALUES (56, '民族风情', '河池市民族特色景区', NULL, 12, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '河池市');
-INSERT INTO `scenic_category` VALUES (57, '民族风情', '来宾市民族特色景区', NULL, 13, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '来宾市');
-INSERT INTO `scenic_category` VALUES (58, '民族风情', '崇左市民族特色景区', NULL, 14, 3, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '崇左市');
-INSERT INTO `scenic_category` VALUES (60, '主题公园', '南宁市主题游乐景区', NULL, 1, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '南宁市');
-INSERT INTO `scenic_category` VALUES (61, '主题公园', '桂林市主题游乐景区', NULL, 2, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '桂林市');
-INSERT INTO `scenic_category` VALUES (62, '主题公园', '柳州市主题游乐景区', NULL, 3, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '柳州市');
-INSERT INTO `scenic_category` VALUES (63, '主题公园', '梧州市主题游乐景区', NULL, 4, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '梧州市');
-INSERT INTO `scenic_category` VALUES (64, '主题公园', '北海市主题游乐景区', NULL, 5, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '北海市');
-INSERT INTO `scenic_category` VALUES (65, '主题公园', '防城港市主题游乐景区', NULL, 6, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '防城港市');
-INSERT INTO `scenic_category` VALUES (66, '主题公园', '钦州市主题游乐景区', NULL, 7, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '钦州市');
-INSERT INTO `scenic_category` VALUES (67, '主题公园', '贵港市主题游乐景区', NULL, 8, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贵港市');
-INSERT INTO `scenic_category` VALUES (68, '主题公园', '玉林市主题游乐景区', NULL, 9, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '玉林市');
-INSERT INTO `scenic_category` VALUES (69, '主题公园', '百色市主题游乐景区', NULL, 10, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '百色市');
-INSERT INTO `scenic_category` VALUES (70, '主题公园', '贺州市主题游乐景区', NULL, 11, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贺州市');
-INSERT INTO `scenic_category` VALUES (71, '主题公园', '河池市主题游乐景区', NULL, 12, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '河池市');
-INSERT INTO `scenic_category` VALUES (72, '主题公园', '来宾市主题游乐景区', NULL, 13, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '来宾市');
-INSERT INTO `scenic_category` VALUES (73, '主题公园', '崇左市主题游乐景区', NULL, 14, 4, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '崇左市');
-INSERT INTO `scenic_category` VALUES (75, '美食街区', '南宁市特色美食区', NULL, 1, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '南宁市');
-INSERT INTO `scenic_category` VALUES (76, '美食街区', '桂林市特色美食区', NULL, 2, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '桂林市');
-INSERT INTO `scenic_category` VALUES (77, '美食街区', '柳州市特色美食区', NULL, 3, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '柳州市');
-INSERT INTO `scenic_category` VALUES (78, '美食街区', '梧州市特色美食区', NULL, 4, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '梧州市');
-INSERT INTO `scenic_category` VALUES (79, '美食街区', '北海市特色美食区', NULL, 5, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '北海市');
-INSERT INTO `scenic_category` VALUES (80, '美食街区', '防城港市特色美食区', NULL, 6, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '防城港市');
-INSERT INTO `scenic_category` VALUES (81, '美食街区', '钦州市特色美食区', NULL, 7, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '钦州市');
-INSERT INTO `scenic_category` VALUES (82, '美食街区', '贵港市特色美食区', NULL, 8, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贵港市');
-INSERT INTO `scenic_category` VALUES (83, '美食街区', '玉林市特色美食区', NULL, 9, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '玉林市');
-INSERT INTO `scenic_category` VALUES (84, '美食街区', '百色市特色美食区', NULL, 10, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '百色市');
-INSERT INTO `scenic_category` VALUES (85, '美食街区', '贺州市特色美食区', NULL, 11, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '贺州市');
-INSERT INTO `scenic_category` VALUES (86, '美食街区', '河池市特色美食区', NULL, 12, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '河池市');
-INSERT INTO `scenic_category` VALUES (87, '美食街区', '来宾市特色美食区', NULL, 13, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '来宾市');
-INSERT INTO `scenic_category` VALUES (88, '美食街区', '崇左市特色美食区', NULL, 14, 5, '2025-06-28 17:11:16', '2025-06-28 17:11:16', '崇左市');
+INSERT INTO `scenic_category` VALUES (1, '自然风光', '包括山水、湖泊、森林等自然景观', '🏞️', 0, 1, '2025-06-28 22:21:51', '2025-06-28 22:21:51', NULL);
+INSERT INTO `scenic_category` VALUES (2, '文化古迹', '包括历史遗迹、古建筑、博物馆等', '🏛️', 0, 2, '2025-06-28 22:21:51', '2025-06-28 22:21:51', NULL);
+INSERT INTO `scenic_category` VALUES (3, '民族风情', '展示各民族特色文化和传统习俗', '👘', 0, 3, '2025-06-28 22:21:51', '2025-06-28 22:21:51', NULL);
+INSERT INTO `scenic_category` VALUES (4, '主题公园', '各类主题游乐园和休闲娱乐场所', '🎡', 0, 4, '2025-06-28 22:21:51', '2025-06-28 22:21:51', NULL);
+INSERT INTO `scenic_category` VALUES (5, '美食街区', '特色美食聚集地和小吃街', '🍜', 0, 5, '2025-06-28 22:21:51', '2025-06-28 22:21:51', NULL);
+INSERT INTO `scenic_category` VALUES (6, '宗教圣地', '寺庙、道观等宗教场所', '🏯', 0, 6, '2025-06-28 22:21:51', '2025-06-28 22:21:51', NULL);
+INSERT INTO `scenic_category` VALUES (7, '红色旅游', '革命历史纪念地和教育基地', '🏴', 0, 7, '2025-06-28 22:21:51', '2025-06-28 22:21:51', NULL);
+INSERT INTO `scenic_category` VALUES (8, '乡村旅游', '农家乐、田园风光等乡村景点', '🌾', 0, 8, '2025-06-28 22:21:51', '2025-06-28 22:21:51', NULL);
+INSERT INTO `scenic_category` VALUES (9, '滨海度假', '海滩、海岛等滨海旅游景点', '🏖️', 0, 9, '2025-06-28 22:21:51', '2025-06-28 22:21:51', NULL);
+INSERT INTO `scenic_category` VALUES (10, '工业遗产', '具有历史价值的工业遗址和设施', '🏭', 0, 10, '2025-06-28 22:21:51', '2025-06-28 22:21:51', NULL);
+INSERT INTO `scenic_category` VALUES (11, '南宁市', '广西壮族自治区首府', '🏛️', 0, 11, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '广西');
+INSERT INTO `scenic_category` VALUES (12, '桂林市', '世界著名的旅游城市', '🗻', 0, 12, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '广西');
+INSERT INTO `scenic_category` VALUES (13, '北海市', '著名的滨海旅游城市', '🏖️', 0, 13, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '广西');
+INSERT INTO `scenic_category` VALUES (14, '防城港市', '中国-东盟海上合作战略支点', '🚢', 0, 14, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '广西');
+INSERT INTO `scenic_category` VALUES (15, '自然风光-南宁', '南宁市自然景观', '🏞️', 11, 15, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '南宁');
+INSERT INTO `scenic_category` VALUES (16, '自然风光-桂林', '桂林市自然景观', '🏞️', 12, 16, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '桂林');
+INSERT INTO `scenic_category` VALUES (17, '自然风光-北海', '北海市自然景观', '🏞️', 13, 17, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '北海');
+INSERT INTO `scenic_category` VALUES (30, '人文古迹-南宁', '南宁市历史文化景点', '🏛️', 11, 30, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '南宁');
+INSERT INTO `scenic_category` VALUES (31, '人文古迹-桂林', '桂林市历史文化景点', '🏛️', 12, 31, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '桂林');
+INSERT INTO `scenic_category` VALUES (32, '人文古迹-北海', '北海市历史文化景点', '🏛️', 13, 32, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '北海');
+INSERT INTO `scenic_category` VALUES (45, '民族风情-南宁', '南宁市民族特色景点', '👘', 11, 45, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '南宁');
+INSERT INTO `scenic_category` VALUES (46, '民族风情-北海', '北海市民族特色景点', '👘', 13, 46, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '北海');
+INSERT INTO `scenic_category` VALUES (75, '美食街区-桂林', '桂林市特色美食街区', '🍜', 12, 75, '2025-06-29 00:44:40', '2025-06-29 00:44:40', '桂林');
+INSERT INTO `scenic_category` VALUES (101, '南宁市', '广西壮族自治区首府', '🏛️', 0, 11, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '广西');
+INSERT INTO `scenic_category` VALUES (102, '桂林市', '世界著名的旅游城市', '🗻', 0, 12, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '广西');
+INSERT INTO `scenic_category` VALUES (103, '北海市', '著名的滨海旅游城市', '🏖️', 0, 13, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '广西');
+INSERT INTO `scenic_category` VALUES (104, '柳州市', '工业旅游城市', '🏭', 0, 14, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '广西');
+INSERT INTO `scenic_category` VALUES (111, '自然风光-南宁', '南宁市自然景观', '🏞️', 101, 15, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '南宁');
+INSERT INTO `scenic_category` VALUES (112, '人文古迹-南宁', '南宁市历史文化景点', '🏛️', 101, 30, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '南宁');
+INSERT INTO `scenic_category` VALUES (113, '民族风情-南宁', '南宁市民族特色景点', '👘', 101, 45, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '南宁');
+INSERT INTO `scenic_category` VALUES (121, '自然风光-桂林', '桂林市自然景观', '🏞️', 102, 16, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '桂林');
+INSERT INTO `scenic_category` VALUES (122, '人文古迹-桂林', '桂林市历史文化景点', '🏛️', 102, 31, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '桂林');
+INSERT INTO `scenic_category` VALUES (123, '美食街区-桂林', '桂林市特色美食街区', '🍜', 102, 75, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '桂林');
+INSERT INTO `scenic_category` VALUES (131, '自然风光-北海', '北海市自然景观', '🏞️', 103, 17, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '北海');
+INSERT INTO `scenic_category` VALUES (132, '人文古迹-北海', '北海市历史文化景点', '🏛️', 103, 32, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '北海');
+INSERT INTO `scenic_category` VALUES (133, '民族风情-北海', '北海市民族特色景点', '👘', 103, 46, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '北海');
+INSERT INTO `scenic_category` VALUES (141, '自然风光-柳州', '柳州市自然景观', '🏞️', 104, 19, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '柳州');
+INSERT INTO `scenic_category` VALUES (142, '人文古迹-柳州', '柳州市历史文化景点', '🏛️', 104, 33, '2025-06-29 00:49:16', '2025-06-29 00:49:16', '柳州');
 
 -- ----------------------------
 -- Table structure for scenic_collection
@@ -334,15 +288,26 @@ CREATE TABLE `scenic_spot`  (
   `category_id` bigint NULL DEFAULT NULL COMMENT '分类ID',
   `region_id` bigint NULL DEFAULT NULL COMMENT '区域ID',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_category_id`(`category_id` ASC) USING BTREE,
+  INDEX `fk_scenic_category`(`category_id` ASC) USING BTREE,
   INDEX `idx_region_id`(`region_id` ASC) USING BTREE,
   CONSTRAINT `fk_scenic_category` FOREIGN KEY (`category_id`) REFERENCES `scenic_category` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_scenic_region` FOREIGN KEY (`region_id`) REFERENCES `scenic_category` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '景点信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 45 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '景点信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of scenic_spot
 -- ----------------------------
+INSERT INTO `scenic_spot` VALUES (34, '青秀山', '青秀山风景名胜区是国家AAAA级旅游景区，以其独特的自然景观和人文景观而闻名。景区内有青秀塔、茶花园、盆景园等景点。', '广西南宁市青秀区青秀山路', 60.00, '08:00-18:00', '/img/1748616033437.jpg', 108.347745, 22.787468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 111, 101);
+INSERT INTO `scenic_spot` VALUES (35, '南宁民族博物馆', '南宁民族博物馆是展示广西少数民族历史文化的重要场所，收藏了大量珍贵的民族文物。', '广西南宁市青秀区民族大道', 0.00, '09:00-17:00', '/img/1748616061193.jpg', 108.367745, 22.817468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 113, 101);
+INSERT INTO `scenic_spot` VALUES (36, '南湖公园', '南湖公园是南宁市区最大的综合性公园，园内湖水碧波荡漾，绿树成荫，是市民休闲娱乐的好去处。', '广西南宁市青秀区南湖路', 0.00, '06:00-22:00', '/img/1748616086868.jpg', 108.357745, 22.807468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 111, 101);
+INSERT INTO `scenic_spot` VALUES (37, '象鼻山', '象鼻山是桂林市的标志性景观，因山形酷似一头巨象临江汲水而得名。', '广西桂林市象山区环城西一路', 75.00, '08:00-17:30', '/img/1748616133671.jpg', 110.287745, 25.277468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 121, 102);
+INSERT INTO `scenic_spot` VALUES (38, '阳朔西街', '阳朔西街是阳朔最热闹的商业街，汇集了各种特色小店、餐馆和酒吧。', '广西桂林市阳朔县西街', 0.00, '全天开放', '/img/1748616162313.jpg', 110.487745, 24.777468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 123, 102);
+INSERT INTO `scenic_spot` VALUES (39, '漓江', '漓江是桂林山水的精华所在，江水清澈，群峰倒映，是世界著名的旅游胜地。', '广西桂林市秀峰区', 220.00, '全天开放', '/img/1748616225252.jpg', 110.287745, 25.277468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 121, 102);
+INSERT INTO `scenic_spot` VALUES (40, '银滩', '北海银滩是中国最好的海滩之一，因细腻洁白的沙滩而得名，是著名的度假胜地。', '广西北海市银海区银滩路', 60.00, '全天开放', '/img/1748616338014.jpg', 109.187745, 21.477468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 131, 103);
+INSERT INTO `scenic_spot` VALUES (41, '北海老街', '北海老街保留了众多具有历史价值的骑楼建筑，是感受北海历史文化的最佳去处。', '广西北海市海城区北海老街', 0.00, '全天开放', '/img/1748616360745.jpg', 109.117745, 21.477468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 132, 103);
+INSERT INTO `scenic_spot` VALUES (42, '涠洲岛', '涠洲岛是中国最大的火山岛，以火山地貌、奇特礁石和美丽的海滩闻名。', '广西北海市涠洲岛', 120.00, '全天开放', '/img/1748616386868.jpg', 109.107745, 21.017468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 131, 103);
+INSERT INTO `scenic_spot` VALUES (43, '柳侯公园', '柳侯公园是柳州市最著名的公园之一，园内有柳侯祠、放生池等景点。', '广西柳州市城中区北站路', 0.00, '06:00-22:00', '/img/1748616271030.jpg', 109.407745, 24.327468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 141, 104);
+INSERT INTO `scenic_spot` VALUES (44, '龙潭公园', '龙潭公园是柳州市区重要的生态公园，以其独特的喀斯特地貌和水体景观著称。', '广西柳州市鱼峰区龙潭路', 20.00, '07:00-18:00', '/img/1748616297105.jpg', 109.417745, 24.337468, '2025-06-29 00:49:16', '2025-06-29 00:49:16', 141, 104);
 
 -- ----------------------------
 -- Table structure for ticket
