@@ -11,22 +11,22 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("scenic_collection")
-@Schema(description = "景点收藏实体类")
+@Schema(description = "景点收藏")
 public class ScenicCollection {
     @TableId(type = IdType.AUTO)
-    @Schema(description = "收藏ID")
+    @Schema(description = "ID")
     private Long id;
-
+    
     @Schema(description = "用户ID")
     private Long userId;
-
+    
     @Schema(description = "景点ID")
     private Long scenicId;
-
+    
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
-
+    
     @TableField(exist = false)
     @Schema(description = "景点信息")
-    private ScenicSpot scenicInfo;
+    private ScenicSpot scenicSpot;
 } 

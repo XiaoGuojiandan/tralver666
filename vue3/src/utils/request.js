@@ -50,12 +50,13 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     const config = response.config || {}
+    console.log('响应拦截器收到数据:', res)
 
     // 如果请求配置中指定了不需要默认的成功/错误提示，则跳过
     const showDefaultMsg = config.showDefaultMsg !== false
 
     // 检查响应状态
-    if (res.code === "200") {
+    if (res.code === "200" || res.code === 200) {  // 添加对数字类型code的支持
       try {
         // 自定义成功提示
         if (config.successMsg) {
@@ -70,10 +71,10 @@ service.interceptors.response.use(
           config.onSuccess(res.data)
         }
         
-        return res.data
+        return res  // 返回完整的响应对象，让调用者自己处理data
       } catch (err) {
         console.error('Success handler error:', err)
-        return res.data
+        return res  // 即使处理出错也返回原始响应
       }
     } else {
       // 错误处理
@@ -87,15 +88,19 @@ service.interceptors.response.use(
           
           switch (res.code) {
             case "401":
+            case 401:
               errorMessage = '未登录或登录已过期，请重新登录'
               break
             case "403":
+            case 403:
               errorMessage = '没有权限进行此操作'
               break
             case "404":
+            case 404:
               errorMessage = '请求的资源不存在'
               break
             case "500":
+            case 500:
               errorMessage = '服务器内部错误'
               break
             default:

@@ -42,9 +42,12 @@ public class ScenicSpot {
     @Schema(description = "纬度")
     private BigDecimal latitude;
 
+    @Schema(description = "区域ID")
+    private Long regionId;
+
     @TableField(exist = false)
     @Schema(description = "分类信息")
-    private ScenicCategory category;
+    private ScenicCategory categoryInfo;
 
     @TableField(fill = FieldFill.INSERT)
     @Schema(description = "创建时间")

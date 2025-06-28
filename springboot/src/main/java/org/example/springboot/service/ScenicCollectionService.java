@@ -42,7 +42,7 @@ public class ScenicCollectionService {
         }
         
         // 检查景点是否存在
-        ScenicSpot scenicSpot = scenicSpotMapper.selectById(scenicId);
+        ScenicSpot scenicSpot = scenicSpotService.getScenicSpotById(scenicId);
         if (scenicSpot == null) {
             throw new ServiceException("景点不存在");
         }
@@ -200,8 +200,9 @@ public class ScenicCollectionService {
                 
         // 填充景点信息
         collections.forEach(collection -> {
-            if (scenicSpotMap.containsKey(collection.getScenicId())) {
-                collection.setScenicInfo(scenicSpotMap.get(collection.getScenicId()));
+            ScenicSpot spot = scenicSpotMap.get(collection.getScenicId());
+            if (spot != null) {
+                collection.setScenicSpot(spot);
             }
         });
     }

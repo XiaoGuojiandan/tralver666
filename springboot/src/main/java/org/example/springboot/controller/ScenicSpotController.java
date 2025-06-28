@@ -1,6 +1,7 @@
 package org.example.springboot.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,25 +31,26 @@ public class ScenicSpotController {
 
     @Operation(summary = "分页查询景点")
     @GetMapping("/page")
-    public Result<Page<ScenicSpot>> page(
+    public Result<IPage<ScenicSpot>> page(
             @RequestParam(defaultValue = "1") Integer currentPage,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long categoryId) {
         
-        LambdaQueryWrapper<ScenicSpot> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(name), ScenicSpot::getName, name)
-                   .eq(categoryId != null, ScenicSpot::getCategoryId, categoryId)
-                   .orderByDesc(ScenicSpot::getCreateTime);
+        LOGGER.info("分页查询景点 - 参数: currentPage={}, size={}, name={}, categoryId={}", currentPage, size, name, categoryId);
         
-        Page<ScenicSpot> page = scenicSpotService.page(new Page<>(currentPage, size), queryWrapper);
+        IPage<ScenicSpot> page = scenicSpotService.getScenicSpotsByPage(name, categoryId, currentPage, size);
         
-        // 填充分类信息
-        page.getRecords().forEach(spot -> {
-            if (spot.getCategoryId() != null) {
-                spot.setCategory(scenicCategoryService.getById(spot.getCategoryId()));
-            }
-        });
+        LOGGER.info("分页查询景点 - 结果: 总记录数={}, 当前页记录数={}", 
+            page.getTotal(), 
+            page.getRecords() != null ? page.getRecords().size() : 0);
+        
+        if (page.getRecords() != null && !page.getRecords().isEmpty()) {
+            page.getRecords().forEach(spot -> 
+                LOGGER.info("景点信息: id={}, name={}, categoryId={}, categoryInfo={}", 
+                    spot.getId(), spot.getName(), spot.getCategoryId(), 
+                    spot.getCategoryInfo() != null ? spot.getCategoryInfo().getName() : "null"));
+        }
         
         return Result.success(page);
     }
@@ -56,7 +58,7 @@ public class ScenicSpotController {
     @Operation(summary = "获取景点详情")
     @GetMapping("/{id}")
     public Result<?> getById(@PathVariable Long id) {
-        ScenicSpot spot = scenicSpotService.getById(id);
+        ScenicSpot spot = scenicSpotService.getScenicSpotById(id);
         return Result.success(spot);
     }
 
