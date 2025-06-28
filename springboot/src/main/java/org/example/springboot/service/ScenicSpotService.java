@@ -3,217 +3,181 @@ package org.example.springboot.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.example.springboot.entity.ScenicCategory;
 import org.example.springboot.entity.ScenicSpot;
-import org.example.springboot.mapper.ScenicCategoryMapper;
 import org.example.springboot.mapper.ScenicSpotMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
-public class ScenicSpotService extends ServiceImpl<ScenicSpotMapper, ScenicSpot> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScenicSpotService.class);
+@Slf4j
+public class ScenicSpotService {
+    @Resource
+    private ScenicSpotMapper scenicSpotMapper;
     
-    @Autowired
-    private ScenicCategoryMapper scenicCategoryMapper;
-    
-    @Autowired
+    @Resource
     private ScenicCategoryService scenicCategoryService;
 
-    public IPage<ScenicSpot> getScenicSpotsByPage(String name, Long categoryId, Integer currentPage, Integer size) {
-        LOGGER.info("开始查询景点分页数据: name={}, categoryId={}, currentPage={}, size={}", 
-            name, categoryId, currentPage, size);
+    public IPage<ScenicSpot> getScenicSpotsByPage(String name, String city, Long categoryId, Integer currentPage, Integer size) {
+        log.info("开始查询景点分页数据: name={}, city={}, categoryId={}, currentPage={}, size={}", 
+            name, city, categoryId, currentPage, size);
             
         Page<ScenicSpot> page = new Page<>(currentPage, size);
         LambdaQueryWrapper<ScenicSpot> wrapper = new LambdaQueryWrapper<>();
         
         // 添加名称搜索条件
-        if (StringUtils.hasText(name)) {
-            LOGGER.info("添加名称搜索条件: {}", name);
+        if (StringUtils.isNotBlank(name)) {
             wrapper.like(ScenicSpot::getName, name)
-                  .or()
-                  .like(ScenicSpot::getDescription, name)
-                  .or()
-                  .like(ScenicSpot::getLocation, name);
+                   .or()
+                   .like(ScenicSpot::getDescription, name)
+                   .or()
+                   .like(ScenicSpot::getLocation, name);
+        }
+        
+        // 添加城市筛选条件
+        if (StringUtils.isNotBlank(city)) {
+            wrapper.eq(ScenicSpot::getCity, city);
         }
         
         // 添加分类筛选条件
         if (categoryId != null) {
-            LOGGER.info("添加分类筛选条件: {}", categoryId);
             wrapper.eq(ScenicSpot::getCategoryId, categoryId);
         }
         
-        // 按创建时间降序排序
-        wrapper.orderByDesc(ScenicSpot::getCreateTime);
-        
-        // 获取分页数据
-        IPage<ScenicSpot> result = page(page, wrapper);
-        LOGGER.info("查询到景点数据: 总记录数={}, 当前页记录数={}", 
-            result.getTotal(), 
-            result.getRecords() != null ? result.getRecords().size() : 0);
+        // 执行查询
+        IPage<ScenicSpot> result = scenicSpotMapper.selectPage(page, wrapper);
         
         // 填充分类信息
-        fillCategoryInfo(result.getRecords());
+        if (result.getRecords() != null && !result.getRecords().isEmpty()) {
+            fillCategoryInfo(result.getRecords());
+        }
         
+        log.info("查询结果: 总记录数={}, 当前页记录数={}", 
+            result.getTotal(), 
+            result.getRecords() != null ? result.getRecords().size() : 0);
+            
         return result;
     }
-
+    
     public ScenicSpot getScenicSpotById(Long id) {
-        ScenicSpot spot = getById(id);
+        ScenicSpot spot = scenicSpotMapper.selectById(id);
         if (spot != null && spot.getCategoryId() != null) {
-            spot.setCategoryInfo(scenicCategoryMapper.selectById(spot.getCategoryId()));
+            spot.setCategoryInfo(scenicCategoryService.getById(spot.getCategoryId()));
         }
         return spot;
     }
 
-    public void createScenicSpot(ScenicSpot scenicSpot) {
-        save(scenicSpot);
-    }
-
-    public void updateScenicSpot(Long id, ScenicSpot scenicSpot) {
-        scenicSpot.setId(id);
-        updateById(scenicSpot);
-    }
-
-    public boolean deleteScenicSpot(Long id) {
-        return removeById(id);
+    public ScenicSpot getById(Long id) {
+        return getScenicSpotById(id);
     }
     
-    /**
-     * 根据分类ID查询景点
-     */
     public List<ScenicSpot> getScenicSpotsByCategoryId(Long categoryId) {
-        LambdaQueryWrapper<ScenicSpot> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ScenicSpot::getCategoryId, categoryId);
-        List<ScenicSpot> spots = list(queryWrapper);
+        LambdaQueryWrapper<ScenicSpot> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ScenicSpot::getCategoryId, categoryId);
+        List<ScenicSpot> spots = scenicSpotMapper.selectList(wrapper);
         fillCategoryInfo(spots);
         return spots;
     }
     
-    /**
-     * 获取所有景点
-     */
+    public void createScenicSpot(ScenicSpot spot) {
+        scenicSpotMapper.insert(spot);
+    }
+    
+    public void updateScenicSpot(Long id, ScenicSpot spot) {
+        spot.setId(id);
+        scenicSpotMapper.updateById(spot);
+    }
+    
+    public void deleteScenicSpot(Long id) {
+        scenicSpotMapper.deleteById(id);
+    }
+    
     public List<ScenicSpot> getAll() {
-        List<ScenicSpot> spots = list();
+        List<ScenicSpot> spots = scenicSpotMapper.selectList(null);
         fillCategoryInfo(spots);
         return spots;
     }
     
-    /**
-     * 获取热门景点
-     */
     public List<ScenicSpot> getHotScenics(Integer limit) {
-        LambdaQueryWrapper<ScenicSpot> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByDesc(ScenicSpot::getCreateTime);
-        queryWrapper.last("LIMIT " + limit);
-        List<ScenicSpot> spots = list(queryWrapper);
+        LambdaQueryWrapper<ScenicSpot> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(ScenicSpot::getCreateTime);
+        wrapper.last("LIMIT " + limit);
+        List<ScenicSpot> spots = scenicSpotMapper.selectList(wrapper);
         fillCategoryInfo(spots);
         return spots;
     }
-    
-    /**
-     * 根据ID列表批量查询景点
-     */
+
     public List<ScenicSpot> getScenicSpotsByIds(List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
-        LambdaQueryWrapper<ScenicSpot> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(ScenicSpot::getId, ids);
-        List<ScenicSpot> spots = list(queryWrapper);
+        LambdaQueryWrapper<ScenicSpot> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(ScenicSpot::getId, ids);
+        List<ScenicSpot> spots = scenicSpotMapper.selectList(wrapper);
         fillCategoryInfo(spots);
         return spots;
     }
     
-    /**
-     * 获取搜索建议
-     */
     public List<Map<String, Object>> getSearchSuggestions(String keyword, Integer limit) {
+        if (StringUtils.isBlank(keyword)) {
+            return new ArrayList<>();
+        }
+        
+        LambdaQueryWrapper<ScenicSpot> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(ScenicSpot::getName, keyword)
+               .or()
+               .like(ScenicSpot::getLocation, keyword)
+               .last("LIMIT " + limit);
+               
+        List<ScenicSpot> spots = scenicSpotMapper.selectList(wrapper);
         List<Map<String, Object>> result = new ArrayList<>();
-        if (!StringUtils.hasText(keyword)) {
-            return result;
+        
+        for (ScenicSpot spot : spots) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", spot.getId());
+            map.put("name", spot.getName());
+            map.put("location", spot.getLocation());
+            result.add(map);
         }
-
-        LambdaQueryWrapper<ScenicSpot> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.and(wrapper -> wrapper
-            .like(ScenicSpot::getName, keyword)
-            .or()
-            .like(ScenicSpot::getLocation, keyword)
-        );
-        queryWrapper.orderByDesc(ScenicSpot::getCreateTime);
-        queryWrapper.last("LIMIT " + limit);
-
-        List<ScenicSpot> scenics = list(queryWrapper);
-        fillCategoryInfo(scenics);
-
-        for (ScenicSpot scenic : scenics) {
-            Map<String, Object> suggestion = new HashMap<>();
-            suggestion.put("id", scenic.getId());
-            suggestion.put("name", scenic.getName());
-            suggestion.put("location", scenic.getLocation());
-            suggestion.put("imageUrl", scenic.getImageUrl());
-            suggestion.put("type", "scenic");
-            suggestion.put("price", scenic.getPrice());
-            suggestion.put("categoryInfo", scenic.getCategoryInfo());
-            result.add(suggestion);
-        }
-
+        
         return result;
     }
-    
-    /**
-     * 填充景点的分类信息
-     */
+
     private void fillCategoryInfo(List<ScenicSpot> spots) {
         if (spots == null || spots.isEmpty()) {
-            LOGGER.info("没有需要填充分类信息的景点数据");
             return;
         }
-        
+
         // 获取所有涉及到的分类ID
-        List<Long> categoryIds = spots.stream()
-                .map(ScenicSpot::getCategoryId)
-                .filter(id -> id != null)
-                .distinct()
-                .collect(Collectors.toList());
-        
-        LOGGER.info("需要查询的分类ID: {}", categoryIds);
-        
+        Set<Long> categoryIds = new HashSet<>();
+        for (ScenicSpot spot : spots) {
+            if (spot.getCategoryId() != null) {
+                categoryIds.add(spot.getCategoryId());
+            }
+        }
+
         if (categoryIds.isEmpty()) {
-            LOGGER.warn("没有找到有效的分类ID");
             return;
         }
-        
-        // 批量查询分类信息
-        LambdaQueryWrapper<ScenicCategory> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(ScenicCategory::getId, categoryIds);
-        List<ScenicCategory> categories = scenicCategoryMapper.selectList(queryWrapper);
-        
-        LOGGER.info("查询到的分类信息数量: {}", categories.size());
-        categories.forEach(category -> 
-            LOGGER.info("分类信息: id={}, name={}", category.getId(), category.getName()));
-        
-        // 转换为Map便于查找
-        Map<Long, ScenicCategory> categoryMap = categories.stream()
-                .collect(Collectors.toMap(ScenicCategory::getId, category -> category));
-        
+
+        // 批量获取分类信息
+        Map<Long, ScenicCategory> categoryMap = new HashMap<>();
+        for (Long categoryId : categoryIds) {
+            ScenicCategory category = scenicCategoryService.getById(categoryId);
+            if (category != null) {
+                categoryMap.put(categoryId, category);
+            }
+        }
+
         // 填充分类信息
-        spots.forEach(spot -> {
+        for (ScenicSpot spot : spots) {
             if (spot.getCategoryId() != null && categoryMap.containsKey(spot.getCategoryId())) {
                 spot.setCategoryInfo(categoryMap.get(spot.getCategoryId()));
-                LOGGER.info("已为景点{}填充分类信息: {}", 
-                    spot.getName(), 
-                    spot.getCategoryInfo().getName());
-            } else {
-                LOGGER.warn("景点{}({})的分类信息未找到", spot.getName(), spot.getCategoryId());
             }
-        });
+        }
     }
 }

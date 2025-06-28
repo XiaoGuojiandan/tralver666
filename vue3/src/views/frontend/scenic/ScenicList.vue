@@ -221,7 +221,8 @@ const pageSize = ref(8)
 const total = ref(0)
 const searchForm = reactive({
   name: '',
-  categoryId: null
+  categoryId: null,
+  city: ''
 })
 const collectionStatus = ref({})
 
@@ -246,6 +247,7 @@ const fetchScenicSpots = async () => {
     const params = {
       name: searchForm.name || '',
       categoryId: searchForm.categoryId || null,
+      city: searchForm.city || '',
       currentPage: currentPage.value,
       size: pageSize.value
     }
@@ -334,6 +336,7 @@ const handleSearch = () => {
 const resetSearch = () => {
   searchForm.name = ''
   searchForm.categoryId = null
+  searchForm.city = ''
   currentPage.value = 1
   fetchScenicSpots()
 }
@@ -426,13 +429,15 @@ const fetchBatchCommentStats = async () => {
 
 // 处理城市选择
 const handleCitySelect = (city) => {
-  searchForm.city = city.name
+  console.log('选择城市:', city)
+  searchForm.city = city.name || ''
   currentPage.value = 1
   fetchScenicSpots()
 }
 
 // 清除城市筛选
 const clearSearchCity = () => {
+  console.log('清除城市筛选')
   searchForm.city = ''
   currentPage.value = 1
   fetchScenicSpots()

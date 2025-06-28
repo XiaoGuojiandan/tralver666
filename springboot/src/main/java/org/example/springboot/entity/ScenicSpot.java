@@ -24,6 +24,9 @@ public class ScenicSpot {
     @Schema(description = "地理位置")
     private String location;
 
+    @Schema(description = "城市")
+    private String city;
+
     @Schema(description = "分类ID")
     private Long categoryId;
 
@@ -48,6 +51,14 @@ public class ScenicSpot {
     @TableField(exist = false)
     @Schema(description = "分类信息")
     private ScenicCategory categoryInfo;
+
+    @TableField(exist = false)
+    @Schema(description = "评分")
+    private Double rating;
+
+    @TableField(exist = false)
+    @Schema(description = "评论数量")
+    private Integer reviewCount;
 
     @TableField(fill = FieldFill.INSERT)
     @Schema(description = "创建时间")

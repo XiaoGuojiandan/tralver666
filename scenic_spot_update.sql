@@ -62,3 +62,12 @@ INSERT INTO scenic_spot (name, description, location, price, opening_hours, imag
 -- 柳州市景点
 ('柳侯公园', '柳侯公园是柳州市最著名的公园之一，园内有柳侯祠、放生池等景点。', '广西柳州市城中区北站路', 0.00, '06:00-22:00', '/img/1748616271030.jpg', 109.407745, 24.327468, 2, NULL),
 ('龙潭公园', '龙潭公园是柳州市区重要的生态公园，以其独特的喀斯特地貌和水体景观著称。', '广西柳州市鱼峰区龙潭路', 20.00, '07:00-18:00', '/img/1748616297105.jpg', 109.417745, 24.337468, 1, NULL);
+
+-- 添加 city 字段到 scenic_spot 表
+ALTER TABLE scenic_spot ADD COLUMN city varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '所在城市' AFTER location;
+
+-- 更新现有数据的城市信息
+UPDATE scenic_spot SET city = '南宁' WHERE id IN (34, 35, 36);
+UPDATE scenic_spot SET city = '桂林' WHERE id IN (37, 38, 39);
+UPDATE scenic_spot SET city = '北海' WHERE id IN (40, 41, 42);
+UPDATE scenic_spot SET city = '柳州' WHERE id IN (43, 44);

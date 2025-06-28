@@ -49,7 +49,7 @@ const cities = [
 const selectCity = (city) => {
   if (selectedCity.value === city.name) {
     selectedCity.value = ''
-    emit('citySelect', { name: '', code: '' })
+    emit('citySelect', { name: null })
   } else {
     selectedCity.value = city.name
     emit('citySelect', city)

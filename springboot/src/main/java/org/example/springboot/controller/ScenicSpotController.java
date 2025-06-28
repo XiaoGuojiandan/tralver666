@@ -35,11 +35,13 @@ public class ScenicSpotController {
             @RequestParam(defaultValue = "1") Integer currentPage,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String name,
+            @RequestParam(required = false) String city,
             @RequestParam(required = false) Long categoryId) {
         
-        LOGGER.info("分页查询景点 - 参数: currentPage={}, size={}, name={}, categoryId={}", currentPage, size, name, categoryId);
+        LOGGER.info("分页查询景点 - 参数: currentPage={}, size={}, name={}, city={}, categoryId={}", 
+            currentPage, size, name, city, categoryId);
         
-        IPage<ScenicSpot> page = scenicSpotService.getScenicSpotsByPage(name, categoryId, currentPage, size);
+        IPage<ScenicSpot> page = scenicSpotService.getScenicSpotsByPage(name, city, categoryId, currentPage, size);
         
         LOGGER.info("分页查询景点 - 结果: 总记录数={}, 当前页记录数={}", 
             page.getTotal(), 
@@ -47,8 +49,8 @@ public class ScenicSpotController {
         
         if (page.getRecords() != null && !page.getRecords().isEmpty()) {
             page.getRecords().forEach(spot -> 
-                LOGGER.info("景点信息: id={}, name={}, categoryId={}, categoryInfo={}", 
-                    spot.getId(), spot.getName(), spot.getCategoryId(), 
+                LOGGER.info("景点信息: id={}, name={}, city={}, categoryId={}, categoryInfo={}", 
+                    spot.getId(), spot.getName(), spot.getCity(), spot.getCategoryId(), 
                     spot.getCategoryInfo() != null ? spot.getCategoryInfo().getName() : "null"));
         }
         
