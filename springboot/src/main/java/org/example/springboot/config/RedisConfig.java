@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableCaching
 @Configuration
 public class RedisConfig {
-    
+
     /**
      * 配置RedisTemplate
      */

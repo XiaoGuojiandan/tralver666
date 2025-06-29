@@ -26,9 +26,15 @@ public class TicketController {
             @RequestParam(defaultValue = "") String ticketName,
             @RequestParam(defaultValue = "") String ticketType,
             @RequestParam(required = false) Long scenicId,
+            @RequestParam(required = false) String cityCode,
             @RequestParam(defaultValue = "1") Integer currentPage,
-            @RequestParam(defaultValue = "10") Integer size) {
+            @RequestParam(defaultValue = "12") Integer size) {
+        LOGGER.info("收到门票分页查询请求 - 参数: ticketName={}, ticketType={}, scenicId={}, cityCode={}, currentPage={}, size={}", 
+            ticketName, ticketType, scenicId, cityCode, currentPage, size);
+        
         Page<Ticket> page = ticketService.getTicketsByPage(ticketName, ticketType, scenicId, currentPage, size);
+        LOGGER.info("查询结果 - 总数: {}, 当前页数据量: {}", page.getTotal(), page.getRecords().size());
+        
         return Result.success(page);
     }
     

@@ -190,22 +190,31 @@ import {
   TakeawayBox,
   OfficeBuilding,
   Ship,
-  Star
+  Star,
+  Medal,
+  Present,
+  Food,
+  Place,
+  Flag,
+  HomeFilled
 } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const baseAPI = process.env.VUE_APP_BASE_API || '/api'
 
-
-
 // 景点分类
-const categories = [
-  { id: 1, name: '自然风光', icon: 'Sunny', description: '山川湖海，自然奇观' },
-  { id: 2, name: '历史文化', icon: 'House', description: '古迹名胜，文化传承' },
-  { id: 3, name: '主题公园', icon: 'TakeawayBox', description: '欢乐体验，亲子时光' },
-  { id: 4, name: '城市地标', icon: 'OfficeBuilding', description: '都市风光，现代建筑' },
-  { id: 5, name: '乡村民俗', icon: 'Ship', description: '田园风情，民俗体验' }
-]
+const categories = ref([
+  { id: 1, name: '自然风光', icon: 'Sunny', description: '山水秀丽，风景如画' },
+  { id: 2, name: '文化古迹', icon: 'House', description: '历史遗迹，文化传承' },
+  { id: 3, name: '民族风情', icon: 'Medal', description: '多彩民族，特色文化' },
+  { id: 4, name: '主题公园', icon: 'Present', description: '欢乐体验，休闲娱乐' },
+  { id: 5, name: '美食街区', icon: 'Food', description: '特色美食，舌尖风味' },
+  { id: 6, name: '宗教圣地', icon: 'Place', description: '宗教文化，心灵净地' },
+  { id: 7, name: '红色旅游', icon: 'Flag', description: '革命圣地，红色记忆' },
+  { id: 8, name: '乡村旅游', icon: 'HomeFilled', description: '田园风光，乡村生活' },
+  { id: 9, name: '滨海度假', icon: 'Ship', description: '碧海银滩，休闲度假' },
+  { id: 10, name: '工业遗产', icon: 'OfficeBuilding', description: '工业文明，历史印记' }
+])
 
 // 景点数据
 const scenicList = ref([])
@@ -496,8 +505,6 @@ onMounted(() => {
   }
 }
 
-
-
 .view-more-btn,
 .more-link {
   color: #667eea;
@@ -524,49 +531,25 @@ onMounted(() => {
 
 // 快速导航样式
 .category-grid {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  justify-content: center;
-
-  // 当内容超出容器宽度时，允许滚动并左对齐
-  @media (max-width: 1200px) {
-    justify-content: flex-start;
-  }
-
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 2px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 2px;
-
-    &:hover {
-      background: #a8a8a8;
-    }
-  }
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  padding: 20px 0;
 }
 
 .category-card {
   position: relative;
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
   transition: all 0.4s ease;
   height: 120px;
-  min-width: 220px;
-  flex-shrink: 0;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 
   &:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
 
     .category-bg {
       transform: scale(1.1);
@@ -577,24 +560,46 @@ onMounted(() => {
     }
   }
 
+  // 第一行：粉色到黄色
   &-1 .category-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FFB7D1 0%, #FFE6EB 100%);
   }
 
   &-2 .category-bg {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #FFD6E0 0%, #FFF0F3 100%);
   }
 
   &-3 .category-bg {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(135deg, #FFE5D6 0%, #FFF5EE 100%);
   }
 
   &-4 .category-bg {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    background: linear-gradient(135deg, #FFF0C8 0%, #FFF8E7 100%);
   }
 
   &-5 .category-bg {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    background: linear-gradient(135deg, #FFECB3 0%, #FFF8E1 100%);
+  }
+
+  // 第二行：绿色到蓝色
+  &-6 .category-bg {
+    background: linear-gradient(135deg, #E0F5D7 0%, #F1FAE9 100%);
+  }
+
+  &-7 .category-bg {
+    background: linear-gradient(135deg, #D4F2E7 0%, #E8F8F1 100%);
+  }
+
+  &-8 .category-bg {
+    background: linear-gradient(135deg, #D6F3F3 0%, #EAF9F9 100%);
+  }
+
+  &-9 .category-bg {
+    background: linear-gradient(135deg, #D4E5FF 0%, #EAF1FF 100%);
+  }
+
+  &-10 .category-bg {
+    background: linear-gradient(135deg, #E5D4FF 0%, #F1EAFF 100%);
   }
 }
 
@@ -605,7 +610,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   transition: transform 0.4s ease;
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .category-content {
@@ -615,14 +620,14 @@ onMounted(() => {
   height: 100%;
   display: flex;
   align-items: center;
-  color: white;
+  color: #5D6975;
 }
 
 .category-icon {
   width: 50px;
   height: 50px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -630,26 +635,12 @@ onMounted(() => {
   transition: all 0.4s ease;
   backdrop-filter: blur(10px);
   position: relative;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: all 0.4s ease;
-  }
-
-  .category-card:hover & {
-    &::before {
-      width: 100%;
-      height: 100%;
-    }
+  .el-icon {
+    font-size: 24px;
+    color: #5D6975;
+    opacity: 0.8;
   }
 }
 
@@ -661,14 +652,14 @@ onMounted(() => {
   font-size: 18px;
   font-weight: 600;
   margin: 0 0 4px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  color: #3C4858;
 }
 
 .category-desc {
   font-size: 13px;
   margin: 0;
+  color: #5D6975;
   opacity: 0.9;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 // 景点网格布局
@@ -953,17 +944,15 @@ onMounted(() => {
 }
 
 // 响应式样式
-@media (max-width: 992px) {
-  .scenic-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+@media (max-width: 1400px) {
+  .category-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
+}
 
-  .guide-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  }
-
-  .section-container {
-    padding: 40px 15px;
+@media (max-width: 1200px) {
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -1004,12 +993,29 @@ onMounted(() => {
   }
 
   .category-grid {
-    justify-content: flex-start;
-    padding: 0 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
   }
 
   .category-card {
     height: 100px;
+  }
+
+  .category-icon {
+    width: 40px;
+    height: 40px;
+
+    .el-icon {
+      font-size: 20px;
+    }
+  }
+
+  .category-name {
+    font-size: 16px;
+  }
+
+  .category-desc {
+    font-size: 12px;
   }
 
   .scenic-grid,
@@ -1037,7 +1043,7 @@ onMounted(() => {
   }
 
   .category-grid {
-    padding: 0 5px;
+    grid-template-columns: 1fr;
   }
 
   .category-content {

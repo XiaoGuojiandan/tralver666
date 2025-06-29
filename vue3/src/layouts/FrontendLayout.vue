@@ -151,19 +151,21 @@
   
   <style lang="scss" scoped>
   .frontend-layout {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    background-color: #f5f7fa;
   }
   
-  // 导航栏样式
   .header {
-    background: #ffffff;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
   }
   
   .nav-container {
@@ -266,21 +268,16 @@
     }
   }
   
-  // 主内容区域
   .main-content {
     flex: 1;
-    padding: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
+    margin-top: 64px; // 导航栏的高度
+    min-height: calc(100vh - 64px);
   }
   
-  // 页脚样式
   .footer {
-    background: #f8fafc;
-    color: #606266;
-    border-top: 1px solid #eaecef;
+    background: #f8f9fa;
     padding: 20px 0;
+    margin-top: auto;
   }
   
   .footer-content {
@@ -295,39 +292,11 @@
     color: #909399;
   }
   
-  // 响应式样式
+  // 响应式调整
   @media (max-width: 768px) {
-    .nav-container {
-      flex-wrap: wrap;
-      height: auto;
-      padding: 10px;
-    }
-    
-    .logo-container {
-      margin-bottom: 10px;
-      width: 100%;
-      justify-content: center;
-    }
-    
-    .main-menu {
-      order: 3;
-      width: 100%;
-      justify-content: center;
-    }
-    
-    .user-actions {
-      order: 2;
-      margin: 0 0 10px 0;
-      width: 100%;
-      justify-content: center;
-    }
-    
-    .footer-content {
-      flex-direction: column;
-    }
-    
-    .footer-section {
-      margin-bottom: 30px;
+    .main-content {
+      margin-top: 56px; // 移动端导航栏高度稍小
+      min-height: calc(100vh - 56px);
     }
   }
   </style>

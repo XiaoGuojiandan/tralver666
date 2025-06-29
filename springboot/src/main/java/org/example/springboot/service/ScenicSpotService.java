@@ -28,29 +28,29 @@ public class ScenicSpotService {
             
         Page<ScenicSpot> page = new Page<>(currentPage, size);
         LambdaQueryWrapper<ScenicSpot> wrapper = new LambdaQueryWrapper<>();
-        
+
         // 添加名称搜索条件
         if (StringUtils.isNotBlank(name)) {
             wrapper.like(ScenicSpot::getName, name)
-                   .or()
-                   .like(ScenicSpot::getDescription, name)
+                .or()
+                .like(ScenicSpot::getDescription, name)
                    .or()
                    .like(ScenicSpot::getLocation, name);
         }
-        
+
         // 添加城市筛选条件
         if (StringUtils.isNotBlank(city)) {
             wrapper.eq(ScenicSpot::getCity, city);
         }
-        
+
         // 添加分类筛选条件
         if (categoryId != null) {
             wrapper.eq(ScenicSpot::getCategoryId, categoryId);
         }
-        
+
         // 执行查询
         IPage<ScenicSpot> result = scenicSpotMapper.selectPage(page, wrapper);
-        
+
         // 填充分类信息
         if (result.getRecords() != null && !result.getRecords().isEmpty()) {
             fillCategoryInfo(result.getRecords());
@@ -59,10 +59,10 @@ public class ScenicSpotService {
         log.info("查询结果: 总记录数={}, 当前页记录数={}", 
             result.getTotal(), 
             result.getRecords() != null ? result.getRecords().size() : 0);
-            
+        
         return result;
     }
-    
+
     public ScenicSpot getScenicSpotById(Long id) {
         ScenicSpot spot = scenicSpotMapper.selectById(id);
         if (spot != null && spot.getCategoryId() != null) {
@@ -82,20 +82,20 @@ public class ScenicSpotService {
         fillCategoryInfo(spots);
         return spots;
     }
-    
+
     public void createScenicSpot(ScenicSpot spot) {
         scenicSpotMapper.insert(spot);
     }
-    
+
     public void updateScenicSpot(Long id, ScenicSpot spot) {
         spot.setId(id);
         scenicSpotMapper.updateById(spot);
     }
-    
+
     public void deleteScenicSpot(Long id) {
         scenicSpotMapper.deleteById(id);
     }
-    
+
     public List<ScenicSpot> getAll() {
         List<ScenicSpot> spots = scenicSpotMapper.selectList(null);
         fillCategoryInfo(spots);
@@ -151,7 +151,7 @@ public class ScenicSpotService {
         if (spots == null || spots.isEmpty()) {
             return;
         }
-
+        
         // 获取所有涉及到的分类ID
         Set<Long> categoryIds = new HashSet<>();
         for (ScenicSpot spot : spots) {
@@ -159,11 +159,11 @@ public class ScenicSpotService {
                 categoryIds.add(spot.getCategoryId());
             }
         }
-
+        
         if (categoryIds.isEmpty()) {
             return;
         }
-
+        
         // 批量获取分类信息
         Map<Long, ScenicCategory> categoryMap = new HashMap<>();
         for (Long categoryId : categoryIds) {
@@ -172,7 +172,7 @@ public class ScenicSpotService {
                 categoryMap.put(categoryId, category);
             }
         }
-
+        
         // 填充分类信息
         for (ScenicSpot spot : spots) {
             if (spot.getCategoryId() != null && categoryMap.containsKey(spot.getCategoryId())) {

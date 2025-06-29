@@ -6,7 +6,7 @@
         <el-icon><Location /></el-icon>
         城市导航
       </h3>
-      <p class="sidebar-subtitle">探索广西各地精彩景点</p>
+
     </div>
     
     <div class="search-box">
@@ -121,11 +121,6 @@ const getCityEmoji = (cityName) => {
   }
 }
 
-.sidebar-subtitle {
-  font-size: 14px;
-  color: #64748b;
-  margin: 0;
-}
 
 .search-box {
   margin-bottom: 20px;

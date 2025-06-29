@@ -16,16 +16,16 @@ public class ScenicCollection {
     @TableId(type = IdType.AUTO)
     @Schema(description = "ID")
     private Long id;
-    
+
     @Schema(description = "用户ID")
     private Long userId;
-    
+
     @Schema(description = "景点ID")
     private Long scenicId;
-    
+
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
-    
+
     @TableField(exist = false)
     @Schema(description = "景点信息")
     private ScenicSpot scenicSpot;

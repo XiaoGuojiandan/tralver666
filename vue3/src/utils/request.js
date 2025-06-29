@@ -212,7 +212,13 @@ const request = {
     return service({
       url,
       method: 'get',
-      params,
+      params: {
+        ...params,
+        // 移除值为null或undefined的参数
+        ...Object.fromEntries(
+          Object.entries(params).filter(([_, v]) => v != null)
+        )
+      },
       ...config
     })
   },

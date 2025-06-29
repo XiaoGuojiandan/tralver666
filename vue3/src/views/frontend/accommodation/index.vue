@@ -1,187 +1,194 @@
 <template>
-  <div class="accommodation-frontend-container">
-    <!-- 搜索和筛选区域 -->
-    <div class="search-filter-section">
-      <div class="section-container">
-        <!-- 页面标题和统计 -->
-        <div class="page-header">
-          <div class="header-content">
-            <h1 class="page-title">
-              <span class="title-icon">🏨</span>
-              精选住宿推荐
-            </h1>
-            <p class="page-subtitle">
-              发现舒适便捷的住宿选择，让您的旅程更加完美
-            </p>
-          </div>
-    
-        </div>
-
-        <!-- 搜索和筛选卡片 -->
-        <div class="search-card">
-          <div class="search-header">
-            <h3 class="search-title">
-              <el-icon><Search /></el-icon>
-              智能筛选
-            </h3>
-          </div>
-          <div class="search-form">
-            <div class="search-inputs">
-              <div class="search-input-group">
-                <el-input
-                  v-model="searchForm.name"
-                  placeholder="搜索住宿名称或地址..."
-                  clearable
-                  size="large"
-                  class="main-search-input"
-                  @keyup.enter="handleSearch"
-                >
-                  <template #prefix>
-                    <el-icon><Search /></el-icon>
-                  </template>
-                </el-input>
-              </div>
-              <div class="search-input-group">
-                <el-select
-                  v-model="filters.scenicId"
-                  placeholder="选择景点"
-                  clearable
-                  size="large"
-                  style="width: 100%"
-                >
-                  <el-option
-                    v-for="item in scenicOptions"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </div>
-              <div class="search-actions">
-                <el-button type="primary" @click="handleSearch" class="search-btn" size="large">
-                  <el-icon><Search /></el-icon>
-                  搜索
-                </el-button>
-                <el-button @click="resetSearch" class="reset-btn" size="large">
-                  <el-icon><Refresh /></el-icon>
-                  重置
-                </el-button>
-              </div>
-            </div>
-
-            <!-- 高级筛选 -->
-            <div class="advanced-filters">
-              <div class="filter-row">
-                <div class="filter-group">
-                  <label class="filter-label">住宿类型</label>
-                  <el-select v-model="filters.type" placeholder="选择类型" clearable>
-                    <el-option
-                      v-for="item in typeOptions"
-                      :key="item"
-                      :label="item"
-                      :value="item"
-                    />
-                  </el-select>
-                </div>
-                <div class="filter-group">
-                  <label class="filter-label">价格区间</label>
-                  <div class="price-range">
-                    <el-input v-model="filters.minPrice" placeholder="最低价" />
-                    <span class="price-separator">-</span>
-                    <el-input v-model="filters.maxPrice" placeholder="最高价" />
-                  </div>
-                </div>
-                <div class="filter-group">
-                  <label class="filter-label">最低评分</label>
-                  <el-rate v-model="filters.minRating" :max="5" :colors="colors" show-score />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="accommodation-container">
+    <div class="sidebar-container">
+      <CitySidebar @city-selected="handleCitySelect" />
     </div>
-
-    <!-- 住宿列表区域 -->
-    <div class="accommodation-list-section">
-      <div class="section-container">
-        <div v-if="loading" class="loading-state">
-          <el-skeleton :rows="8" animated />
-        </div>
-
-        <div v-else-if="accommodationList && accommodationList.length > 0" class="accommodation-grid">
-          <div
-            v-for="item in accommodationList"
-            :key="item.id"
-            class="accommodation-card hover-lift"
-            @click="goToDetail(item.id)"
-          >
-            <div class="card-image">
-              <img :src="getImageUrl(item.imageUrl)" :alt="item.name" />
-              <div class="image-overlay">
-                <div class="overlay-content">
-                  <div class="accommodation-rating">
-                    <el-icon><Star /></el-icon>
-                    {{ item.starLevel || '4.5' }}
-                  </div>
-                </div>
+    <div class="main-content">
+      <div class="accommodation-frontend-container">
+        <!-- 搜索和筛选区域 -->
+        <div class="search-filter-section">
+          <div class="section-container">
+            <!-- 页面标题和统计 -->
+            <div class="page-header">
+              <div class="header-content">
+                <h1 class="page-title">
+                  <span class="title-icon">🏨</span>
+                  精选住宿推荐
+                </h1>
+                <p class="page-subtitle">
+                  发现舒适便捷的住宿选择，让您的旅程更加完美
+                </p>
               </div>
-              <div class="card-badges">
-                <span v-if="item.type" class="badge type">{{ item.type }}</span>
-                <span v-if="item.priceRange" class="badge price">{{ item.priceRange }}</span>
-              </div>
+        
             </div>
-            <div class="card-content">
-              <h3 class="accommodation-name">{{ item.name }}</h3>
-              <div class="accommodation-location">
-                <el-icon><Location /></el-icon>
-                {{ item.address || '地址待更新' }}
+
+            <!-- 搜索和筛选卡片 -->
+            <div class="search-card">
+              <div class="search-header">
+                <h3 class="search-title">
+                  <el-icon><Search /></el-icon>
+                  智能筛选
+                </h3>
               </div>
-              <div v-if="item.scenicName" class="accommodation-scenic">
-                <el-icon><MapLocation /></el-icon>
-                靠近 {{ item.scenicName }}
-                <span v-if="item.distance" class="distance">{{ item.distance }}</span>
-              </div>
-              <p class="accommodation-features">{{ truncateText(item.features || '舒适便捷的住宿环境，为您提供优质的服务体验', 60) }}</p>
-              <div class="card-footer">
-                <div class="card-meta">
-                  <div class="meta-stats">
-                    <span class="rating-info">
-                      <el-icon><Star /></el-icon>
-                      {{ getDisplayRating(item.starLevel) }}
-                    </span>
-                    <span class="price-info">{{ item.priceRange || '价格面议' }}</span>
+              <div class="search-form">
+                <div class="search-inputs">
+                  <div class="search-input-group">
+                    <el-input
+                      v-model="searchForm.name"
+                      placeholder="搜索住宿名称或地址..."
+                      clearable
+                      size="large"
+                      class="main-search-input"
+                      @keyup.enter="handleSearch"
+                    >
+                      <template #prefix>
+                        <el-icon><Search /></el-icon>
+                      </template>
+                    </el-input>
+                  </div>
+                  <div class="search-input-group">
+                    <el-select
+                      v-model="filters.scenicId"
+                      placeholder="选择景点"
+                      clearable
+                      size="large"
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in scenicOptions"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      />
+                    </el-select>
+                  </div>
+                  <div class="search-actions">
+                    <el-button type="primary" @click="handleSearch" class="search-btn" size="large">
+                      <el-icon><Search /></el-icon>
+                      搜索
+                    </el-button>
+                    <el-button @click="resetSearch" class="reset-btn" size="large">
+                      <el-icon><Refresh /></el-icon>
+                      重置
+                    </el-button>
                   </div>
                 </div>
-                <el-button type="primary" size="small" class="detail-btn" @click.stop="goToDetail(item.id)">
-                  查看详情
-                </el-button>
+
+                <!-- 高级筛选 -->
+                <div class="advanced-filters">
+                  <div class="filter-row">
+                    <div class="filter-group">
+                      <label class="filter-label">住宿类型</label>
+                      <el-select v-model="filters.type" placeholder="选择类型" clearable>
+                        <el-option
+                          v-for="item in typeOptions"
+                          :key="item"
+                          :label="item"
+                          :value="item"
+                        />
+                      </el-select>
+                    </div>
+                    <div class="filter-group">
+                      <label class="filter-label">价格区间</label>
+                      <div class="price-range">
+                        <el-input v-model="filters.minPrice" placeholder="最低价" />
+                        <span class="price-separator">-</span>
+                        <el-input v-model="filters.maxPrice" placeholder="最高价" />
+                      </div>
+                    </div>
+                    <div class="filter-group">
+                      <label class="filter-label">最低评分</label>
+                      <el-rate v-model="filters.minRating" :max="5" :colors="colors" show-score />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div v-else class="empty-state">
-          <div class="empty-icon">🏨</div>
-          <h3 class="empty-title">暂无住宿信息</h3>
-          <p class="empty-desc">试试调整搜索条件或浏览其他选项</p>
-          <el-button type="primary" @click="resetSearch" class="empty-action">
-            重新搜索
-          </el-button>
-        </div>
+        <!-- 住宿列表区域 -->
+        <div class="accommodation-list-section">
+          <div class="section-container">
+            <div v-if="loading" class="loading-state">
+              <el-skeleton :rows="8" animated />
+            </div>
 
-        <!-- 分页 -->
-        <div class="pagination-wrapper" v-if="total > 0">
-          <el-pagination
-            background
-            layout="total, prev, pager, next, jumper"
-            :current-page="currentPage"
-            :page-size="pageSize"
-            :total="total"
-            @current-change="handleCurrentChange"
-            @size-change="handleSizeChange"
-            class="modern-pagination"
-          />
+            <div v-else-if="accommodationList && accommodationList.length > 0" class="accommodation-grid">
+              <div
+                v-for="item in accommodationList"
+                :key="item.id"
+                class="accommodation-card hover-lift"
+                @click="goToDetail(item.id)"
+              >
+                <div class="card-image">
+                  <img :src="getImageUrl(item.imageUrl)" :alt="item.name" />
+                  <div class="image-overlay">
+                    <div class="overlay-content">
+                      <div class="accommodation-rating">
+                        <el-icon><Star /></el-icon>
+                        {{ item.starLevel || '4.5' }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-badges">
+                    <span v-if="item.type" class="badge type">{{ item.type }}</span>
+                    <span v-if="item.priceRange" class="badge price">{{ item.priceRange }}</span>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <h3 class="accommodation-name">{{ item.name }}</h3>
+                  <div class="accommodation-location">
+                    <el-icon><Location /></el-icon>
+                    {{ item.address || '地址待更新' }}
+                  </div>
+                  <div v-if="item.scenicName" class="accommodation-scenic">
+                    <el-icon><MapLocation /></el-icon>
+                    靠近 {{ item.scenicName }}
+                    <span v-if="item.distance" class="distance">{{ item.distance }}</span>
+                  </div>
+                  <p class="accommodation-features">{{ truncateText(item.features || '舒适便捷的住宿环境，为您提供优质的服务体验', 60) }}</p>
+                  <div class="card-footer">
+                    <div class="card-meta">
+                      <div class="meta-stats">
+                        <span class="rating-info">
+                          <el-icon><Star /></el-icon>
+                          {{ getDisplayRating(item.starLevel) }}
+                        </span>
+                        <span class="price-info">{{ item.priceRange || '价格面议' }}</span>
+                      </div>
+                    </div>
+                    <el-button type="primary" size="small" class="detail-btn" @click.stop="goToDetail(item.id)">
+                      查看详情
+                    </el-button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="empty-state">
+              <div class="empty-icon">🏨</div>
+              <h3 class="empty-title">暂无住宿信息</h3>
+              <p class="empty-desc">试试调整搜索条件或浏览其他选项</p>
+              <el-button type="primary" @click="resetSearch" class="empty-action">
+                重新搜索
+              </el-button>
+            </div>
+
+            <!-- 分页 -->
+            <div class="pagination-wrapper" v-if="total > 0">
+              <el-pagination
+                background
+                layout="total, prev, pager, next, jumper"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                :total="total"
+                @current-change="handleCurrentChange"
+                @size-change="handleSizeChange"
+                class="modern-pagination"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -193,6 +200,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import request from '@/utils/request'
 import { Location, Star, Picture, Search, Refresh, MapLocation } from '@element-plus/icons-vue'
+import CitySidebar from '@/components/frontend/CitySidebar.vue'
 
 const router = useRouter()
 const baseAPI = process.env.VUE_APP_BASE_API || '/api'
@@ -205,6 +213,7 @@ const pageSize = ref(12)
 const total = ref(0)
 const scenicOptions = ref([])
 const typeOptions = ref([])
+const selectedCity = ref(null)
 
 // 搜索表单
 const searchForm = reactive({
@@ -352,9 +361,38 @@ onMounted(() => {
   fetchAccommodationTypes()
   fetchAccommodations()
 })
+
+const handleCitySelect = (city) => {
+  selectedCity.value = city
+  // 这里添加根据城市筛选住宿的逻辑
+}
 </script>
 
 <style lang="scss" scoped>
+.accommodation-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sidebar-container {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0; // 防止flex布局溢出
+}
+
+.accommodation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
 .accommodation-frontend-container {
   min-height: 100vh;
   background: #f8fafc;
@@ -365,7 +403,7 @@ onMounted(() => {
   .section-container {
     max-width: 1300px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 0px 20px;
   }
 
   // 搜索筛选区域
@@ -380,7 +418,7 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 40px;
-    padding: 40px 0 20px;
+    padding: 10px 0 20px;
     border-bottom: 1px solid #e2e8f0;
   }
 
@@ -881,6 +919,19 @@ onMounted(() => {
   }
 
   @media (max-width: 768px) {
+    .accommodation-container {
+      flex-direction: column;
+      padding: 15px;
+    }
+
+    .sidebar-container {
+      width: 100%;
+    }
+
+    .accommodation-grid {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+
     .page-header {
       flex-direction: column;
       align-items: flex-start;

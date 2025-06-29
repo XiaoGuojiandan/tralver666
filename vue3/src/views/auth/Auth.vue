@@ -3,7 +3,7 @@
     <div class="auth-box">
       <div class="auth-header" v-if="showHeader">
         <div class="logo"><el-icon><Place /></el-icon></div>
-        <h1 class="title">广西智游指南</h1>
+        <h1 class="title">旅游信息系统</h1>
         <div class="subtitle">TRAVEL INFORMATION SYSTEM</div>
       </div>
       
