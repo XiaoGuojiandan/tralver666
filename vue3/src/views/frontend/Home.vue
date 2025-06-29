@@ -358,7 +358,6 @@ onMounted(() => {
   width: 100%;
   font-family: "思源黑体", "Source Han Sans", "Noto Sans CJK SC", sans-serif;
   color: #333;
-
   min-height: 100vh;
 }
 
@@ -370,6 +369,8 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 0 0 40px 40px;
+  box-shadow: 0 10px 30px rgba(76, 175, 80, 0.1);
 }
 
 .hero-background {
@@ -620,8 +621,8 @@ onMounted(() => {
 .category-icon {
   width: 50px;
   height: 50px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -629,6 +630,7 @@ onMounted(() => {
   transition: all 0.4s ease;
   backdrop-filter: blur(10px);
   position: relative;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
 
   &::before {
     content: '';
@@ -637,7 +639,7 @@ onMounted(() => {
     left: 50%;
     width: 0;
     height: 0;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.4);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: all 0.4s ease;
@@ -677,25 +679,17 @@ onMounted(() => {
 }
 
 .scenic-card {
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.1);
   transition: all 0.4s ease;
   cursor: pointer;
   position: relative;
 
   &:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-
-    .card-image img {
-      transform: scale(1.1);
-    }
-
-    .image-overlay {
-      opacity: 1;
-    }
+    box-shadow: 0 12px 40px rgba(76, 175, 80, 0.2);
   }
 }
 
@@ -824,11 +818,14 @@ onMounted(() => {
     background: linear-gradient(45deg, #667eea, #764ba2);
     border: none;
     font-weight: 600;
-    padding: 8px 16px;
+    padding: 8px 20px;
+    color: white;
+    transition: all 0.3s ease;
 
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+      background: linear-gradient(45deg, #388E3C, #66BB6A);
     }
   }
 }
