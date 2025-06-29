@@ -5,7 +5,7 @@
         <div class="nav-container">
           <div class="logo-container">
             <el-icon class="logo-icon"><Place /></el-icon>
-            <h1 class="logo-text">旅游信息系统</h1>
+            <h1 class="logo-text">广西智游指南</h1>
           </div>
           
           <el-menu
@@ -79,7 +79,7 @@
       <!-- 页脚 -->
       <footer class="footer">
         <div class="footer-content">
-          <p class="copyright">&copy; 2025 旅游信息系统 | 版权所有</p>
+          <p class="copyright">&copy; 2025 广西智游指南 | 版权所有</p>
         </div>
       </footer>
     </div>

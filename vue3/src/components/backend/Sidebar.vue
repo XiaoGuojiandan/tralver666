@@ -2,7 +2,7 @@
   <div class="sidebar-container" :class="{ 'is-collapsed': isCollapsed }">
     <div class="logo">
       <span class="logo-icon">🌍</span>
-      <span class="logo-text" v-show="!isCollapsed">旅游信息系统</span>
+      <span class="logo-text" v-show="!isCollapsed">广西智游指南</span>
     </div>
     <div class="menu-wrapper">
       <el-menu :default-active="activeMenu" :collapse="isCollapsed" :collapse-transition="false" mode="vertical" class="sidebar-menu"
