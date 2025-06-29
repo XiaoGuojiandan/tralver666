@@ -14,11 +14,9 @@
               <h1 class="page-title">
                 <span class="title-icon">🏞️</span>
                 探索精彩景点
-                <span class="total-count" v-if="total > 0">(共{{ total }}个景点)</span>
+
               </h1>
-              <p class="page-subtitle">
-                发现广西各地的美丽风景和文化遗产
-              </p>
+
             </div>
           </div>
 
@@ -204,7 +202,7 @@ const userStore = useUserStore()
 const tableData = ref([])
 const categoryList = ref([])
 const currentPage = ref(1)
-const pageSize = ref(8)
+const pageSize = ref(9)
 const total = ref(0)
 const searchForm = reactive({
   name: '',
