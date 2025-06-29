@@ -1,7 +1,7 @@
 <template>
   <div class="accommodation-container">
-    <div class="sidebar-container">
-      <CitySidebar @city-selected="handleCitySelect" />
+    <div class="sidebar">
+      <CitySidebar @citySelect="handleCitySelect" />
     </div>
     <div class="main-content">
       <div class="accommodation-frontend-container">
@@ -226,7 +226,9 @@ const filters = reactive({
   type: '',
   minPrice: '',
   maxPrice: '',
-  minRating: 0
+  minRating: 0,
+  city: '',
+  province: ''
 })
 
 // 评分颜色
@@ -244,6 +246,12 @@ const fetchAccommodations = async () => {
 
     // 添加搜索条件
     if (searchForm.name) params.name = searchForm.name
+
+    // 添加城市筛选条件
+    if (selectedCity.value) {
+      params.city = selectedCity.value.name
+      params.province = selectedCity.value.province
+    }
 
     // 添加筛选条件
     if (filters.scenicId) params.scenicId = filters.scenicId
@@ -313,6 +321,9 @@ const resetSearch = () => {
   filters.minPrice = ''
   filters.maxPrice = ''
   filters.minRating = 0
+  filters.city = ''
+  filters.province = ''
+  selectedCity.value = null
   currentPage.value = 1
   fetchAccommodations()
 }
@@ -364,27 +375,37 @@ onMounted(() => {
 
 const handleCitySelect = (city) => {
   selectedCity.value = city
-  // 这里添加根据城市筛选住宿的逻辑
+  // 当城市选择改变时，重置页码并重新获取住宿列表
+  currentPage.value = 1
+  // 如果选择了城市，添加到筛选条件中
+  if (city && city.name) {
+    filters.city = city.name
+    filters.province = '广西' // 由于是广西的城市，直接设置省份为广西
+  } else {
+    // 如果取消选择城市，清除城市筛选条件
+    filters.city = ''
+    filters.province = ''
+  }
+  fetchAccommodations()
 }
 </script>
 
 <style lang="scss" scoped>
 .accommodation-container {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
 }
 
-.sidebar-container {
-  width: 280px;
-  flex-shrink: 0;
+.sidebar {
+  flex: 0 0 280px;
 }
 
 .main-content {
   flex: 1;
-  min-width: 0; // 防止flex布局溢出
+  min-width: 0;
 }
 
 .accommodation-grid {
@@ -924,7 +945,7 @@ const handleCitySelect = (city) => {
       padding: 15px;
     }
 
-    .sidebar-container {
+    .sidebar {
       width: 100%;
     }
 

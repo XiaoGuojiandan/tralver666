@@ -65,4 +65,14 @@ public class Accommodation {
     @TableField(exist = false)
     @Schema(description = "评价数量")
     private Long reviewCount;
+    
+    /**
+     * 所在城市
+     */
+    private String city;
+
+    /**
+     * 所在省份
+     */
+    private String province;
 } 

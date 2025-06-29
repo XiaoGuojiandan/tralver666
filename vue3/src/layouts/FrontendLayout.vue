@@ -23,21 +23,22 @@
               <el-icon><Bicycle /></el-icon>
               <span>景点</span>
             </el-menu-item>
-            
-            <el-menu-item index="/guide">
-              <el-icon><Reading /></el-icon>
-              <span>攻略</span>
-            </el-menu-item>
-            
-            <el-menu-item index="/accommodation">
-              <el-icon><House /></el-icon>
-              <span>周边住宿</span>
-            </el-menu-item>
-            
+
             <el-menu-item index="/tickets">
               <el-icon><Ticket /></el-icon>
               <span>门票预订</span>
             </el-menu-item>
+
+            <el-menu-item index="/accommodation">
+              <el-icon><House /></el-icon>
+              <span>周边住宿</span>
+            </el-menu-item>
+
+            <el-menu-item index="/guide">
+            <el-icon><Reading /></el-icon>
+            <span>攻略</span>
+          </el-menu-item>
+
           </el-menu>
           
           <div class="user-actions">

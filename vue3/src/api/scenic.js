@@ -27,4 +27,22 @@ export function getRegions() {
     url: '/scenic-category/regions',
     method: 'get'
   })
+}
+
+export function getAccommodationList(params) {
+  return request({
+    url: '/accommodation/page',
+    method: 'get',
+    params: {
+      currentPage: params.currentPage,
+      size: params.size,
+      name: params.name,
+      type: params.type,
+      priceRange: params.priceRange,
+      minStarLevel: params.minRating,
+      scenicId: params.scenicId,
+      city: params.city,
+      province: params.province
+    }
+  })
 } 
