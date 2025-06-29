@@ -60,7 +60,13 @@ public class ScenicSpotController {
     @Operation(summary = "获取景点详情")
     @GetMapping("/{id}")
     public Result<?> getById(@PathVariable Long id) {
+        LOGGER.info("收到获取景点详情请求，ID: {}", id);
         ScenicSpot spot = scenicSpotService.getScenicSpotById(id);
+        if (spot == null) {
+            LOGGER.warn("未找到ID为{}的景点", id);
+            return Result.error("未找到该景点");
+        }
+        LOGGER.info("成功获取景点详情: {}", spot);
         return Result.success(spot);
     }
 

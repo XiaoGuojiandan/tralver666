@@ -14,7 +14,7 @@
  
       </div>
     </div>
-  <div class="search-section" style="width:100%;text-align:center;margin:40px 0;">
+  <div class="search-section" style="width:100%;text-align:center;margin:30px 0;">
        <div class="hero-search">
           <smart-search
             placeholder="搜索目的地、景点、攻略..."
@@ -465,7 +465,7 @@ onMounted(() => {
 .section-container {
   max-width: 1300px;
   margin: 0 auto;
-  padding: 60px 20px;
+  padding: 30px 20px;
 }
 
 // 区域样式

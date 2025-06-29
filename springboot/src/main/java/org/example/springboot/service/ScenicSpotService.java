@@ -64,9 +64,24 @@ public class ScenicSpotService {
     }
 
     public ScenicSpot getScenicSpotById(Long id) {
+        log.info("开始获取景点详情，ID: {}", id);
         ScenicSpot spot = scenicSpotMapper.selectById(id);
-        if (spot != null && spot.getCategoryId() != null) {
-            spot.setCategoryInfo(scenicCategoryService.getById(spot.getCategoryId()));
+        if (spot == null) {
+            log.warn("未找到ID为{}的景点", id);
+            return null;
+        }
+        log.info("查询到景点基本信息: {}", spot);
+        
+        if (spot.getCategoryId() != null) {
+            ScenicCategory category = scenicCategoryService.getById(spot.getCategoryId());
+            if (category != null) {
+                log.info("查询到景点分类信息: {}", category);
+                spot.setCategoryInfo(category);
+            } else {
+                log.warn("未找到景点对应的分类信息，分类ID: {}", spot.getCategoryId());
+            }
+        } else {
+            log.info("景点没有关联分类信息");
         }
         return spot;
     }

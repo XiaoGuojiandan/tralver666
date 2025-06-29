@@ -307,7 +307,7 @@ const isLoggedIn = computed(() => userStore.isLoggedIn)
 
 // 获取图片完整URL
 const getImageUrl = (url) => {
-  if (!url) return '/default-scenic.jpg'
+  if (!url) return require('@/assets/images/no-image.png')
   return url.startsWith('http') ? url : baseAPI + url
 }
 
@@ -501,35 +501,47 @@ const fetchWeatherInfo = async (location) => {
 
 const fetchDetail = async () => {
   const id = route.params.id
-  await request.get(`/scenic/${id}`,null, {
-    onSuccess: (res) => {
-      scenic.value = res
-      fetchTickets(id)
-      // 获取评论统计
-      fetchCommentStats(id)
-      // 加载天气信息
-      fetchWeatherInfo(res.location)
-      
-      // 确保DOM已经渲染完成后再初始化地图
-      nextTick(() => {
-        loadMapScript()
-          .then(() => {
-            // 延长等待时间，确保地图容器已完全渲染
-            setTimeout(() => {
-              initMap()
-            }, 500)
-          })
-          .catch(err => {
-            console.error('加载高德地图失败:', err)
-          })
-      })
-      
-      // 如果用户已登录，检查收藏状态
-      if (isLoggedIn.value) {
-        checkCollectionStatus(id)
+  console.log('开始获取景点详情，ID:', id)
+  try {
+    await request.get(`/scenic/${id}`, null, {
+      showDefaultMsg: false,
+      onSuccess: (res) => {
+        console.log('获取景点详情成功:', res)
+        scenic.value = res
+        fetchTickets(id)
+        // 获取评论统计
+        fetchCommentStats(id)
+        // 加载天气信息
+        fetchWeatherInfo(res.location)
+        
+        // 确保DOM已经渲染完成后再初始化地图
+        nextTick(() => {
+          loadMapScript()
+            .then(() => {
+              // 延长等待时间，确保地图容器已完全渲染
+              setTimeout(() => {
+                initMap()
+              }, 500)
+            })
+            .catch(err => {
+              console.error('加载高德地图失败:', err)
+            })
+        })
+        
+        // 如果用户已登录，检查收藏状态
+        if (isLoggedIn.value) {
+          checkCollectionStatus(id)
+        }
+      },
+      onError: (error) => {
+        console.error('获取景点详情失败:', error)
+        ElMessage.error('获取景点详情失败，请稍后重试')
       }
-    }
-  })
+    })
+  } catch (error) {
+    console.error('获取景点详情出错:', error)
+    ElMessage.error('获取景点详情失败，请稍后重试')
+  }
 }
 
 // 获取评论统计信息

@@ -209,14 +209,16 @@ service.interceptors.response.use(
 // 扩展请求方法
 const request = {
   get(url, params = {}, config = {}) {
+    // 确保params是一个对象
+    const safeParams = params || {};
     return service({
       url,
       method: 'get',
       params: {
-        ...params,
+        ...safeParams,
         // 移除值为null或undefined的参数
         ...Object.fromEntries(
-          Object.entries(params).filter(([_, v]) => v != null)
+          Object.entries(safeParams).filter(([_, v]) => v != null)
         )
       },
       ...config
