@@ -402,23 +402,22 @@ const goEdit = () => {
   }
 
   .publish-btn {
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    background: linear-gradient(135deg, #c2ffde 0%, #4addff 100%);
     border: none;
-    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+    box-shadow: 0 4px 15px rgba(99, 227, 232, 0.76);
 
     &:hover {
-      box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+      box-shadow: 0 6px 20px rgba(162, 219, 255, 0.4);
     }
   }
 
   .reset-btn {
-    background: #f7fafc;
-    color: #4a5568;
-    border: 2px solid #e2e8f0;
+    background: linear-gradient(135deg, rgba(190, 203, 255, 0.84) 0%, #1e40ed 100%);
+    color: #ffffff;
+    border: none;
 
     &:hover {
-      background: #edf2f7;
-      border-color: #cbd5e0;
+      box-shadow: 0 6px 20px rgba(70, 97, 220, 0.4);
     }
   }
 }

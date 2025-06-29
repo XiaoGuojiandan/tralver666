@@ -178,8 +178,7 @@ const fetchRelatedGuides = async () => {
   if (!guide.value) return
   
   try {
-    await request.get('/guide/related', { 
-      guideId: guide.value.id,
+    await request.get(`/guide/related/${guide.value.id}`, { 
       limit: 3
     }, {
       showDefaultMsg: false,
@@ -472,6 +471,8 @@ onMounted(fetchGuide)
       border-color: rgba(255, 255, 255, 0.5);
     }
   }
+}
+
 // 攻略内容区域 - 简洁无卡片设计
 .guide-content-section {
   background: white;
@@ -1205,6 +1206,5 @@ onMounted(fetchGuide)
       font-size: 16px;
     }
   }
-}
-}
+  }
 </style>

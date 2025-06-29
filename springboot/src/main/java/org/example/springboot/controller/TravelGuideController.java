@@ -67,6 +67,15 @@ public class TravelGuideController {
         return Result.success(hotGuides);
     }
 
+    @Operation(summary = "获取相关攻略")
+    @GetMapping("/related/{guideId}")
+    public Result<?> getRelatedGuides(
+            @PathVariable Long guideId,
+            @RequestParam(required = false, defaultValue = "3") Integer limit) {
+        List<TravelGuide> relatedGuides = travelGuideService.getRelatedGuides(guideId, limit);
+        return Result.success(relatedGuides);
+    }
+
     @Operation(summary = "获取攻略搜索建议")
     @GetMapping("/suggestions")
     public Result<?> getGuideSuggestions(

@@ -312,18 +312,19 @@ const getUserInfo = async () => {
       });
 
       // 确保返回数据存在
-      if (response) {
+      if (response?.data) {
+        const userData = response.data;
         // 更新store中的用户信息
-        userStore.updateUserInfo(response);
+        userStore.updateUserInfo(userData);
 
         // 直接更新表单数据
-        userForm.id = response.id || "";
-        userForm.username = response.username || "";
-        userForm.nickname = response.nickname || "";
-        userForm.email = response.email || "";
-        userForm.phone = response.phone || "";
-        userForm.sex = response.sex || "男";
-        userForm.avatar = response.avatar || "";
+        userForm.id = userData.id;
+        userForm.username = userData.username || "";
+        userForm.nickname = userData.nickname || "";
+        userForm.email = userData.email || "";
+        userForm.phone = userData.phone || "";
+        userForm.sex = userData.sex || "男";
+        userForm.avatar = userData.avatar || "";
 
         console.log("用户信息加载成功:", userForm);
       }
@@ -400,6 +401,12 @@ const customUploadAvatar = async (options) => {
 // 更新用户头像信息
 const updateUserAvatar = async (avatarPath) => {
   try {
+    // 确保用户ID存在
+    if (!userForm.id) {
+      ElMessage.error("用户ID不存在，请重新登录");
+      return;
+    }
+
     await request.put(
       `/user/${userForm.id}`,
       { avatar: avatarPath },
@@ -431,10 +438,16 @@ const submitUserInfo = async () => {
     // 表单验证
     await userFormRef.value.validate();
 
+    // 确保用户ID存在
+    if (!userForm.id) {
+      ElMessage.error("用户ID不存在，请重新登录");
+      return;
+    }
+
     await request.put(
       `/user/${userForm.id}`,
       {
-        name: userForm.name,
+        nickname: userForm.nickname,
         email: userForm.email,
         phone: userForm.phone,
         sex: userForm.sex,
@@ -446,7 +459,7 @@ const submitUserInfo = async () => {
           // 更新本地用户信息
           const updatedUserInfo = {
             ...userStore.userInfo,
-            name: userForm.name,
+            nickname: userForm.nickname,
             email: userForm.email,
             phone: userForm.phone,
             sex: userForm.sex,
