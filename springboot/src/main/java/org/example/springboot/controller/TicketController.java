@@ -32,7 +32,7 @@ public class TicketController {
         LOGGER.info("收到门票分页查询请求 - 参数: ticketName={}, ticketType={}, scenicId={}, cityCode={}, currentPage={}, size={}", 
             ticketName, ticketType, scenicId, cityCode, currentPage, size);
         
-        Page<Ticket> page = ticketService.getTicketsByPage(ticketName, ticketType, scenicId, currentPage, size);
+        Page<Ticket> page = ticketService.getTicketsByPage(ticketName, ticketType, scenicId, cityCode, currentPage, size);
         LOGGER.info("查询结果 - 总数: {}, 当前页数据量: {}", page.getTotal(), page.getRecords().size());
         
         return Result.success(page);

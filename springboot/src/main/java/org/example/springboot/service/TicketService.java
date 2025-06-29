@@ -11,9 +11,15 @@ import org.example.springboot.mapper.ScenicSpotMapper;
 import org.example.springboot.mapper.TicketMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketService.class);
 
     @Resource
     private TicketMapper ticketMapper;
@@ -24,7 +30,25 @@ public class TicketService {
     /**
      * 分页查询门票
      */
-    public Page<Ticket> getTicketsByPage(String ticketName, String ticketType, Long scenicId, Integer currentPage, Integer size) {
+    public Page<Ticket> getTicketsByPage(String ticketName, String ticketType, Long scenicId, String cityCode, Integer currentPage, Integer size) {
+        // 如果指定了城市，先查询该城市的所有景点ID
+        List<Long> scenicIds = null;
+        if (StringUtils.isNotBlank(cityCode)) {
+            LambdaQueryWrapper<ScenicSpot> scenicWrapper = new LambdaQueryWrapper<>();
+            scenicWrapper.eq(ScenicSpot::getCity, cityCode);
+            List<ScenicSpot> scenicSpots = scenicSpotMapper.selectList(scenicWrapper);
+            scenicIds = scenicSpots.stream()
+                    .map(ScenicSpot::getId)
+                    .collect(Collectors.toList());
+            LOGGER.info("城市[{}]对应的景点IDs: {}", cityCode, scenicIds);
+            
+            // 如果没有找到任何景点，直接返回空结果
+            if (scenicIds.isEmpty()) {
+                LOGGER.info("未找到城市[{}]的任何景点", cityCode);
+                return new Page<>(currentPage, size);
+            }
+        }
+
         LambdaQueryWrapper<Ticket> queryWrapper = new LambdaQueryWrapper<>();
         
         // 添加查询条件
@@ -37,6 +61,10 @@ public class TicketService {
         if (scenicId != null) {
             queryWrapper.eq(Ticket::getScenicId, scenicId);
         }
+        // 添加城市筛选条件
+        if (scenicIds != null && !scenicIds.isEmpty()) {
+            queryWrapper.in(Ticket::getScenicId, scenicIds);
+        }
         
         // 只查询可预订的门票
         queryWrapper.eq(Ticket::getStatus, 1);
@@ -44,7 +72,9 @@ public class TicketService {
         // 按创建时间降序排序
         queryWrapper.orderByDesc(Ticket::getCreateTime);
         
-        return ticketMapper.selectPage(new Page<>(currentPage, size), queryWrapper);
+        Page<Ticket> result = ticketMapper.selectPage(new Page<>(currentPage, size), queryWrapper);
+        LOGGER.info("查询到的门票数量: {}", result.getRecords().size());
+        return result;
     }
     
     /**

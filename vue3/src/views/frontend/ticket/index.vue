@@ -2,8 +2,8 @@
   <div class="ticket-list-container">
     <div class="section-container">
       <!-- 左侧城市侧边栏 -->
-      <div class="sidebar-container">
-        <CitySidebar @city-selected="handleCitySelect" />
+      <div class="sidebar">
+        <CitySidebar @citySelect="handleCitySelect" />
       </div>
 
       <!-- 右侧主内容区 -->
@@ -225,7 +225,7 @@ const fetchTickets = async () => {
       ticketName: searchForm.value.ticketName,
       ticketType: searchForm.value.ticketType,
       scenicId: searchForm.value.scenicId,
-      cityCode: selectedCity.value?.code,
+      cityCode: selectedCity.value?.name,
       currentPage: currentPage.value,
       size: pageSize.value
     }
@@ -303,9 +303,8 @@ onMounted(() => {
 }
 
 // 侧边栏
-.sidebar-container {
-  width: 280px;
-  flex-shrink: 0;
+.sidebar {
+  flex: 0 0 280px;
   position: sticky;
   top: 24px;
   height: fit-content;
@@ -713,7 +712,7 @@ onMounted(() => {
     flex-direction: column;
   }
 
-  .sidebar-container {
+  .sidebar {
     width: 100%;
     position: static;
     margin-bottom: 24px;
@@ -722,7 +721,14 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   .section-container {
-    padding: 0 16px;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: static;
+    margin-bottom: 20px;
   }
 
   .search-form {
