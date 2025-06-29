@@ -13,6 +13,8 @@ import org.example.springboot.mapper.TravelGuideMapper;
 import org.example.springboot.mapper.UserMapper;
 import org.example.springboot.util.JwtTokenUtils;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class CollectionService {
+    private static final Logger logger = LoggerFactory.getLogger(CollectionService.class);
+    
     @Resource
     private CollectionMapper collectionMapper;
     
@@ -75,8 +79,12 @@ public class CollectionService {
      * 分页查询用户的收藏列表
      */
     public Page<Collection> getCollectionsByPage(Long userId, Integer currentPage, Integer size) {
+        logger.info("开始查询用户收藏列表, userId={}, currentPage={}, size={}", userId, currentPage, size);
+        
         // 检查用户是否存在
-        if (userMapper.selectById(userId) == null) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            logger.error("用户不存在, userId={}", userId);
             throw new ServiceException("用户不存在");
         }
         
@@ -86,6 +94,7 @@ public class CollectionService {
                    .orderByDesc(Collection::getCreateTime);
         
         Page<Collection> page = collectionMapper.selectPage(new Page<>(currentPage, size), queryWrapper);
+        logger.info("查询到收藏记录数: {}", page.getRecords().size());
         
         // 填充攻略信息
         fillGuideInfo(page.getRecords());
@@ -108,7 +117,10 @@ public class CollectionService {
      */
     public Page<Collection> getCurrentUserCollections(Integer currentPage, Integer size) {
         User currentUser = JwtTokenUtils.getCurrentUser();
+        logger.info("获取当前用户收藏列表, userId={}", currentUser != null ? currentUser.getId() : null);
+        
         if (currentUser == null) {
+            logger.error("用户未登录");
             throw new ServiceException("未登录");
         }
         return getCollectionsByPage(currentUser.getId(), currentPage, size);
@@ -177,16 +189,23 @@ public class CollectionService {
      * 填充攻略信息
      */
     private void fillGuideInfo(List<Collection> collections) {
-        if (collections.isEmpty()) return;
+        if (collections.isEmpty()) {
+            logger.info("收藏列表为空，无需填充攻略信息");
+            return;
+        }
         
         List<Long> guideIds = collections.stream()
                                .map(Collection::getGuideId)
                                .distinct()
                                .collect(Collectors.toList());
         
+        logger.info("开始填充攻略信息, guideIds={}", guideIds);
+        
         if (!guideIds.isEmpty()) {
-            Map<Long, TravelGuide> guideMap = travelGuideMapper.selectBatchIds(guideIds)
-                                           .stream()
+            List<TravelGuide> guides = travelGuideMapper.selectBatchIds(guideIds);
+            logger.info("查询到攻略数量: {}", guides.size());
+            
+            Map<Long, TravelGuide> guideMap = guides.stream()
                                            .collect(Collectors.toMap(TravelGuide::getId, guide -> guide));
             
             for (Collection collection : collections) {
@@ -195,6 +214,11 @@ public class CollectionService {
                     collection.setGuideTitle(guide.getTitle());
                     collection.setGuideCoverImage(guide.getCoverImage());
                     collection.setGuideViews(guide.getViews());
+                    logger.debug("填充攻略信息成功: collectionId={}, guideTitle={}", 
+                               collection.getId(), guide.getTitle());
+                } else {
+                    logger.warn("未找到对应的攻略信息: collectionId={}, guideId={}", 
+                              collection.getId(), collection.getGuideId());
                 }
             }
         }

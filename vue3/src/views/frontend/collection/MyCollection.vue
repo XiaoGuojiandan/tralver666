@@ -28,7 +28,7 @@
                 <div class="tab-label">
                   <el-icon><MapLocation /></el-icon>
                   <span>景点收藏</span>
-                  <span class="tab-count">{{ scenicTotal }}</span>
+                  <span class="tab-count" v-if="scenicTotal > 0">{{ scenicTotal }}</span>
                 </div>
               </template>
 
@@ -50,67 +50,68 @@
 
               <!-- 景点收藏网格 -->
               <div v-else class="collection-grid">
-                <div
-                  v-for="(collection, index) in scenicCollections"
-                  :key="collection.id"
-                  class="collection-card scenic-collection hover-lift"
-                  :class="`delay-${(index % 6 + 1) * 100}`"
-                  @click="goToScenicDetail(collection.scenicInfo.id)"
-                >
-                  <div class="card-image">
-                    <img :src="getImageUrl(collection.scenicInfo.imageUrl)" :alt="collection.scenicInfo.name" />
-                    <div class="image-overlay">
-                      <div class="overlay-content">
-                        <div class="collection-time">
-                          <el-icon><Clock /></el-icon>
-                          {{ formatDate(collection.createTime) }}
+                <template v-for="(collection, index) in scenicCollections" :key="collection.id">
+                  <div
+                    v-if="collection && collection.scenicSpot"
+                    class="collection-card scenic-collection hover-lift"
+                    :class="`delay-${(index % 6 + 1) * 100}`"
+                    @click="goToScenicDetail(collection.scenicSpot.id)"
+                  >
+                    <div class="card-image">
+                      <img :src="getImageUrl(collection.scenicSpot?.imageUrl)" :alt="collection.scenicSpot?.name" />
+                      <div class="image-overlay">
+                        <div class="overlay-content">
+                          <div class="collection-time">
+                            <el-icon><Clock /></el-icon>
+                            {{ formatDate(collection.createTime) }}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-badges">
+                        <span v-if="collection.scenicSpot?.categoryInfo?.name" class="badge category">
+                          {{ collection.scenicSpot.categoryInfo.name }}
+                        </span>
+                        <span v-if="collection.scenicSpot?.price === 0" class="badge free">免费</span>
+                        <span v-else-if="collection.scenicSpot?.price > 0" class="badge price">
+                          ¥{{ collection.scenicSpot.price }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="card-content">
+                      <h3 class="item-name">{{ collection.scenicSpot?.name || '未知景点' }}</h3>
+
+                      <div class="item-location" v-if="collection.scenicSpot?.location">
+                        <el-icon><Location /></el-icon>
+                        <span>{{ collection.scenicSpot.location }}</span>
+                      </div>
+
+                      <div class="card-footer">
+                        <div class="collection-date">
+                          收藏于 {{ formatDate(collection.createTime) }}
+                        </div>
+                        <div class="card-actions">
+                          <el-button
+                            type="primary"
+                            size="small"
+                            @click.stop="goToScenicDetail(collection.scenicSpot.id)"
+                            class="detail-btn"
+                          >
+                            查看详情
+                          </el-button>
+                          <el-button
+                            type="danger"
+                            size="small"
+                            @click.stop="handleCancelScenicCollection(collection.scenicSpot.id)"
+                            class="cancel-btn"
+                          >
+                            <el-icon><Delete /></el-icon>
+                          </el-button>
                         </div>
                       </div>
                     </div>
-                    <div class="card-badges">
-                      <span v-if="collection.scenicInfo.categoryInfo" class="badge category">
-                        {{ collection.scenicInfo.categoryInfo.name }}
-                      </span>
-                      <span v-if="collection.scenicInfo.price === 0" class="badge free">免费</span>
-                      <span v-else-if="collection.scenicInfo.price > 0" class="badge price">
-                        ¥{{ collection.scenicInfo.price }}
-                      </span>
-                    </div>
                   </div>
-
-                  <div class="card-content">
-                    <h3 class="item-name">{{ collection.scenicInfo.name }}</h3>
-
-                    <div class="item-location">
-                      <el-icon><Location /></el-icon>
-                      <span>{{ collection.scenicInfo.location }}</span>
-                    </div>
-
-                    <div class="card-footer">
-                      <div class="collection-date">
-                        收藏于 {{ formatDate(collection.createTime) }}
-                      </div>
-                      <div class="card-actions">
-                        <el-button
-                          type="primary"
-                          size="small"
-                          @click.stop="goToScenicDetail(collection.scenicInfo.id)"
-                          class="detail-btn"
-                        >
-                          查看详情
-                        </el-button>
-                        <el-button
-                          type="danger"
-                          size="small"
-                          @click.stop="handleCancelScenicCollection(collection.scenicInfo.id)"
-                          class="cancel-btn"
-                        >
-                          <el-icon><Delete /></el-icon>
-                        </el-button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                </template>
               </div>
 
               <!-- 景点收藏分页 -->
@@ -133,7 +134,7 @@
                 <div class="tab-label">
                   <el-icon><Document /></el-icon>
                   <span>攻略收藏</span>
-                  <span class="tab-count">{{ guideTotal }}</span>
+                  <span class="tab-count" v-if="guideTotal > 0">{{ guideTotal }}</span>
                 </div>
               </template>
 
@@ -163,7 +164,7 @@
                   @click="goToGuideDetail(collection.guideId)"
                 >
                   <div class="card-image">
-                    <img :src="getImageUrl(collection.guideCoverImage)" :alt="collection.guideTitle" />
+                    <img :src="getImageUrl(collection.guideInfo?.coverImage || collection.guideCoverImage)" :alt="collection.guideTitle" />
                     <div class="image-overlay">
                       <div class="overlay-content">
                         <div class="guide-views">
@@ -239,11 +240,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import { useUserStore } from '@/store/user'
+import { formatDate } from '@/utils/dateUtils'
 import {
   MapLocation,
   Document,
@@ -278,21 +280,42 @@ const guideTotal = ref(0)
 
 // 获取用户收藏的景点
 const fetchScenicCollections = async () => {
+  console.log('开始获取景点收藏列表...')
   scenicLoading.value = true
   try {
+    const userId = userStore.userInfo.id
+    console.log('当前用户ID:', userId)
     await request.get('/scenic-collection/user', {
       currentPage: scenicCurrentPage.value,
       size: scenicPageSize.value,
-      userId: userStore.userInfo.id
+      userId: userId
     }, {
       showDefaultMsg: false,
       onSuccess: (data) => {
-        scenicCollections.value = data.records || []
-        scenicTotal.value = data.total || 0
+        console.log('获取景点收藏成功，原始数据:', data)
+        if (data.records) {
+          const validRecords = data.records.filter(item => {
+            if (!item || !item.scenicSpot) {
+              console.warn('发现无效的收藏记录:', item)
+              return false
+            }
+            return true
+          })
+          scenicCollections.value = validRecords
+          console.log('处理后的收藏数据:', scenicCollections.value)
+          scenicTotal.value = validRecords.length
+          console.log('景点收藏总数:', scenicTotal.value)
+        } else {
+          console.warn('返回的数据中没有 records 字段:', data)
+          scenicCollections.value = []
+          scenicTotal.value = 0
+        }
       }
     })
   } catch (error) {
     console.error('获取收藏景点失败:', error)
+    scenicCollections.value = []
+    scenicTotal.value = 0
   } finally {
     scenicLoading.value = false
   }
@@ -300,21 +323,42 @@ const fetchScenicCollections = async () => {
 
 // 获取用户收藏的攻略
 const fetchGuideCollections = async () => {
+  console.log('开始获取攻略收藏列表...')
   guideLoading.value = true
   try {
+    const userId = userStore.userInfo.id
+    console.log('当前用户ID:', userId)
     await request.get('/collection/page', {
       currentPage: guideCurrentPage.value,
       size: guidePageSize.value,
-      userId: userStore.userInfo.id
+      userId: userId
     }, {
       showDefaultMsg: false,
       onSuccess: (data) => {
-        guideCollections.value = data.records || []
-        guideTotal.value = data.total || 0
+        console.log('获取攻略收藏成功，原始数据:', data)
+        if (data.records) {
+          const validRecords = data.records.filter(item => {
+            if (!item || (!item.guideTitle && !item.guideCoverImage)) {
+              console.warn('发现无效的攻略收藏记录:', item)
+              return false
+            }
+            return true
+          })
+          guideCollections.value = validRecords
+          console.log('处理后的攻略数据:', guideCollections.value)
+          guideTotal.value = validRecords.length
+          console.log('攻略收藏总数:', guideTotal.value)
+        } else {
+          console.warn('返回的数据中没有 records 字段:', data)
+          guideCollections.value = []
+          guideTotal.value = 0
+        }
       }
     })
   } catch (error) {
     console.error('获取收藏攻略失败:', error)
+    guideCollections.value = []
+    guideTotal.value = 0
   } finally {
     guideLoading.value = false
   }
@@ -322,10 +366,11 @@ const fetchGuideCollections = async () => {
 
 // 标签页切换
 const handleTabChange = (tabName) => {
+  console.log('切换标签页:', tabName)
   activeTab.value = tabName
-  if (tabName === 'scenic' && scenicCollections.value.length === 0) {
+  if (tabName === 'scenic') {
     fetchScenicCollections()
-  } else if (tabName === 'guide' && guideCollections.value.length === 0) {
+  } else if (tabName === 'guide') {
     fetchGuideCollections()
   }
 }
@@ -379,9 +424,7 @@ const handleCancelScenicCollection = (scenicId) => {
     } catch (error) {
       console.error('取消景点收藏失败:', error)
     }
-  }).catch(() => {
-    // 用户取消操作
-  })
+  }).catch(() => {})
 }
 
 // 取消攻略收藏
@@ -401,28 +444,37 @@ const handleCancelGuideCollection = (guideId) => {
     } catch (error) {
       console.error('取消攻略收藏失败:', error)
     }
-  }).catch(() => {
-    // 用户取消操作
-  })
+  }).catch(() => {})
 }
 
 // 获取图片完整URL
 const getImageUrl = (url) => {
-  if (!url) return '/default-image.jpg'
-  return url.startsWith('http') ? url : baseAPI + url
+  console.log('处理图片URL:', url)
+  if (!url) {
+    console.log('使用默认图片')
+    return '/src/assets/images/no-image.png'
+  }
+  const finalUrl = url.startsWith('http') ? url : baseAPI + url
+  console.log('最终图片URL:', finalUrl)
+  return finalUrl
 }
 
-// 格式化日期
-const formatDate = (dateStr) => {
-  if (!dateStr) return ''
-  const date = new Date(dateStr)
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-}
-
+// 在组件挂载时获取数据
 onMounted(() => {
-  // 默认加载景点收藏
+  console.log('组件挂载，开始获取数据')
+  // 同时加载景点和攻略收藏
   fetchScenicCollections()
+  fetchGuideCollections()
 })
+
+// 监听用户信息变化
+watch(() => userStore.userInfo, (newVal) => {
+  if (newVal && newVal.id) {
+    console.log('用户信息更新，重新加载数据')
+    fetchScenicCollections()
+    fetchGuideCollections()
+  }
+}, { deep: true })
 </script>
 
 <style lang="scss" scoped>
