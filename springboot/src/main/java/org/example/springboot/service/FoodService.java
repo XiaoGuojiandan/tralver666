@@ -8,10 +8,12 @@ import org.example.springboot.entity.Food;
 import org.example.springboot.entity.FoodCategory;
 import org.example.springboot.entity.Comment;
 import org.example.springboot.entity.FoodComment;
+import org.example.springboot.entity.User;
 import org.example.springboot.mapper.FoodMapper;
 import org.example.springboot.mapper.FoodCategoryMapper;
 import org.example.springboot.mapper.CommentMapper;
 import org.example.springboot.mapper.FoodCommentMapper;
+import org.example.springboot.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,9 @@ public class FoodService {
 
     @Resource
     private FoodCommentMapper foodCommentMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
     public Page<Food> getFoodList(Integer pageNum, Integer pageSize, String city, Long categoryId, String keyword) {
         Page<Food> page = new Page<>(pageNum, pageSize);
@@ -130,7 +135,22 @@ public class FoodService {
         LambdaQueryWrapper<FoodComment> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(FoodComment::getFoodId, foodId)
                .orderByDesc(FoodComment::getCreateTime);
-        return foodCommentMapper.selectPage(page, wrapper);
+        Page<FoodComment> commentPage = foodCommentMapper.selectPage(page, wrapper);
+        
+        // 填充用户信息
+        if (commentPage.getRecords() != null && !commentPage.getRecords().isEmpty()) {
+            for (FoodComment comment : commentPage.getRecords()) {
+                if (comment.getUserId() != null) {
+                    User user = userMapper.selectById(comment.getUserId());
+                    if (user != null) {
+                        comment.setUserNickname(user.getNickname());
+                        comment.setUserAvatar(user.getAvatar());
+                    }
+                }
+            }
+        }
+        
+        return commentPage;
     }
 
     @Transactional

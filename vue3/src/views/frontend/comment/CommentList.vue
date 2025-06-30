@@ -263,6 +263,7 @@ const deleteComment = (item) => {
       .actions {
         display: flex;
         gap: 15px;
+        justify-content: right;
         
         .liked-btn {
           color: #e74c3c;
