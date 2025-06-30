@@ -66,7 +66,7 @@
             <div class="card-content">
               <div v-for="spot in results.scenicSpots" :key="spot.id" class="result-item">
                 <el-image 
-                  :src="spot.coverImage" 
+                  :src="getImageUrl(spot.imageUrl)" 
                   class="item-image"
                   fit="cover"
                   loading="lazy"
@@ -81,12 +81,9 @@
                   <h3>{{ spot.name }}</h3>
                   <p class="description">{{ spot.description }}</p>
                   <div class="item-footer">
-                    <el-rate
-                      v-model="spot.rating"
-                      disabled
-                      text-color="#ff9900"
-                      score-template="{value}"
-                    />
+                    <div class="location">
+                      <el-tag size="small" effect="plain">{{ spot.city }}</el-tag>
+                    </div>
                     <el-button type="primary" link @click="goToDetail('scenic', spot.id)">
                       查看详情 <el-icon><ArrowRight /></el-icon>
                     </el-button>
@@ -113,7 +110,7 @@
             <div class="card-content">
               <div v-for="food in results.foods" :key="food.id" class="result-item">
                 <el-image 
-                  :src="food.image" 
+                  :src="getImageUrl(food.imageUrl)" 
                   class="item-image"
                   fit="cover"
                   loading="lazy"
@@ -128,7 +125,10 @@
                   <h3>{{ food.name }}</h3>
                   <p class="description">{{ food.description }}</p>
                   <div class="item-footer">
-                    <el-tag size="small" effect="plain">{{ food.category }}</el-tag>
+                    <div class="meta-info">
+                      <el-tag size="small" effect="plain">{{ food.location }}</el-tag>
+                      <span class="price">{{ food.priceRange }}</span>
+                    </div>
                     <el-button type="primary" link @click="goToDetail('food', food.id)">
                       查看详情 <el-icon><ArrowRight /></el-icon>
                     </el-button>
@@ -155,7 +155,7 @@
             <div class="card-content">
               <div v-for="hotel in results.accommodations" :key="hotel.id" class="result-item">
                 <el-image 
-                  :src="hotel.image" 
+                  :src="getImageUrl(hotel.imageUrl)" 
                   class="item-image"
                   fit="cover"
                   loading="lazy"
@@ -170,7 +170,18 @@
                   <h3>{{ hotel.name }}</h3>
                   <p class="description">{{ hotel.description }}</p>
                   <div class="item-footer">
-                    <div class="price">¥{{ hotel.price }}<span>/晚</span></div>
+                    <div class="meta-info">
+                      <el-tag size="small" effect="plain">{{ hotel.type }}</el-tag>
+                      <div class="rating">
+                        <el-rate
+                          v-model="hotel.starLevel"
+                          disabled
+                          text-color="#ff9900"
+                          score-template="{value}"
+                        />
+                      </div>
+                      <span class="price">{{ hotel.priceRange }}</span>
+                    </div>
                     <el-button type="primary" link @click="goToDetail('accommodation', hotel.id)">
                       查看详情 <el-icon><ArrowRight /></el-icon>
                     </el-button>
@@ -197,7 +208,7 @@
             <div class="card-content">
               <div v-for="guide in results.guides" :key="guide.id" class="result-item">
                 <el-image 
-                  :src="guide.coverImage" 
+                  :src="getImageUrl(guide.coverImage)" 
                   class="item-image"
                   fit="cover"
                   loading="lazy"
@@ -239,6 +250,8 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Search, Magic, Collection, Picture, ArrowRight } from '@element-plus/icons-vue'
 import { getSmartRecommendations } from '@/api/smart-match'
+
+const API_BASE_URL = 'http://localhost:1236' // 添加API基础URL
 
 const router = useRouter()
 const searchQuery = ref('')
@@ -308,13 +321,32 @@ const handleTagClick = (tag) => {
   handleSearch()
 }
 
+const getImageUrl = (path) => {
+  if (!path) return ''
+  // 如果已经是完整URL，直接返回
+  if (path.startsWith('http')) return path
+  // 否则拼接API基础URL
+  return `${API_BASE_URL}/files${path}`
+}
+
 const goToDetail = (type, id) => {
   const routes = {
-    scenic: `/scenic/detail/${id}`,
+    scenic: `/scenic/${id}`,
     food: `/food/detail/${id}`,
     accommodation: `/accommodation/detail/${id}`,
     guide: `/guide/detail/${id}`
   }
+  
+  if (!routes[type]) {
+    ElMessage.warning('无效的跳转类型')
+    return
+  }
+
+  if (!id) {
+    ElMessage.warning('无效的ID')
+    return
+  }
+
   router.push(routes[type])
 }
 </script>
@@ -655,24 +687,27 @@ const goToDetail = (type, id) => {
             justify-content: space-between;
             align-items: center;
 
-            .price {
-              color: #f56c6c;
-              font-size: 1.2rem;
-              font-weight: 600;
+            .meta-info {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              flex-wrap: wrap;
 
-              span {
-                font-size: 0.8rem;
-                color: #999;
-                margin-left: 2px;
+              .price {
+                color: #ff6b6b;
+                font-weight: 500;
+              }
+
+              .rating {
+                display: flex;
+                align-items: center;
               }
             }
 
-            .author {
+            .location {
               display: flex;
               align-items: center;
-              gap: 8px;
-              color: #666;
-              font-size: 0.9rem;
+              gap: 5px;
             }
           }
         }

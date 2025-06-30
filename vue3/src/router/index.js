@@ -209,10 +209,10 @@ const frontendRoutes = [
         path: 'food',
         name: 'FoodList',
         component: () => import('@/views/frontend/food/FoodList.vue'),
-        meta: { title: '美食' }
+        meta: { title: '美食列表' }
       },
       {
-        path: 'food/:id',
+        path: 'food/detail/:id',
         name: 'FoodDetail',
         component: () => import('@/views/frontend/food/detail.vue'),
         meta: { title: '美食详情' }

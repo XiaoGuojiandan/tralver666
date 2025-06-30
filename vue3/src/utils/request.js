@@ -238,17 +238,6 @@ const request = {
   }
 }
 
-// 添加对service的直接调用支持
-const requestWrapper = (config) => {
-  return service(config)
-}
-
-// 将扩展方法添加到wrapper上
-Object.assign(requestWrapper, request)
-
-// 导出包装后的请求函数
-export default requestWrapper
-
 
  
  
@@ -299,3 +288,5 @@ export default requestWrapper
 //    }
 //  })
  
+
+export default request 
