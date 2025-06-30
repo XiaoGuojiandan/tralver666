@@ -13,7 +13,7 @@ public interface CommentMapper extends BaseMapper<Comment> {
     @Select("SELECT c.*, u.nickname as userNickname, u.avatar as userAvatar " +
             "FROM comment c " +
             "LEFT JOIN user u ON c.user_id = u.id " +
-            "WHERE c.target_id = #{targetId} AND c.target_type = #{targetType} " +
+            "WHERE c.scenic_id = #{targetId} " +
             "ORDER BY c.create_time DESC")
     IPage<Comment> getCommentsByTargetId(Page<Comment> page,
                                        @Param("targetId") Long targetId,

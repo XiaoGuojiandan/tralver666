@@ -32,8 +32,7 @@ public class CommentService {
         
         // 如果提供了目标ID，直接使用ID查询
         if (targetId != null) {
-            queryWrapper.eq(Comment::getTargetId, targetId)
-                       .eq(Comment::getTargetType, "scenic");
+            queryWrapper.eq(Comment::getTargetId, targetId);
         } 
         // 如果提供了景点名称，先查询景点ID，再使用ID查询评论
         else if (StringUtils.isNotBlank(scenicName)) {
@@ -42,8 +41,7 @@ public class CommentService {
                 // 如果没有找到匹配的景点，返回空结果
                 return new Page<>(currentPage, size);
             }
-            queryWrapper.in(Comment::getTargetId, scenicIds)
-                       .eq(Comment::getTargetType, "scenic");
+            queryWrapper.in(Comment::getTargetId, scenicIds);
         }
         
         // 如果提供了用户名/昵称，先查询用户ID，再使用ID查询评论
@@ -121,7 +119,6 @@ public class CommentService {
         return commentMapper.selectList(
             new LambdaQueryWrapper<Comment>()
                 .eq(Comment::getTargetId, scenicId)
-                .eq(Comment::getTargetType, "scenic")
         );
     }
 } 

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -19,11 +20,14 @@ public class Comment {
     @Schema(description = "用户ID")
     private Long userId;
 
-    @Schema(description = "目标ID（景点ID或美食ID）")
+    @Schema(description = "目标ID（景点ID）")
+    @TableField("scenic_id")
+    @JsonAlias("scenicId")
     private Long targetId;
 
     @Schema(description = "目标类型（scenic或food）")
-    private String targetType;
+    @TableField(exist = false)
+    private String targetType = "scenic";  // 默认为景点类型
 
     @Schema(description = "评论内容")
     private String content;
