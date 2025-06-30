@@ -361,9 +361,10 @@ const fetchAccommodationTypes = async () => {
 
 // 处理图片URL
 const getImageUrl = (url) => {
-  if (!url) return ''
+  if (!url) return require('@/assets/images/no-image.png')
   if (url.startsWith('http')) return url
-  return baseAPI + url
+  if (url.startsWith('/api/')) return url
+  return url.startsWith('/') ? baseAPI + url : baseAPI + '/' + url
 }
 
 // 搜索处理
@@ -514,7 +515,7 @@ const submitForm = async () => {
       try {
         if (isEdit.value) {
           // 更新
-          await request.put(`/accommodation/${form.id}`, form, {
+          await request.put('/accommodation', form, {
             successMsg: '更新成功',
             onSuccess: () => {
               dialogVisible.value = false
