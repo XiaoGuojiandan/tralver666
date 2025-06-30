@@ -220,7 +220,7 @@ const fetchFoodList = async () => {
     const params = {
       pageNum: currentPage.value,
       pageSize: pageSize.value,
-      keyword: searchForm.keyword,
+      name: searchForm.keyword,
       categoryId: searchForm.categoryId,
       city: searchForm.city
     }

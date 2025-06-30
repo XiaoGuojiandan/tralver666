@@ -1,8 +1,6 @@
 package org.example.springboot.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -41,12 +39,21 @@ public class Ticket {
     @Schema(description = "库存")
     private Integer stock;
 
+    @Schema(description = "每日库存")
+    @TableField(exist = false)
+    private Integer dailyStock;
+
+    @TableField(exist = false)
+    private ScenicSpot scenicSpot;
+
     @Schema(description = "状态: 1-可预订, 0-不可预订")
     private Integer status;
 
+    @TableField(fill = FieldFill.INSERT)
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 } 

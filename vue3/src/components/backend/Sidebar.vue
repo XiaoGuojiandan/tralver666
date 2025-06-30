@@ -13,17 +13,22 @@
           <el-icon><HomeFilled /></el-icon>
           <template #title>首页</template>
         </el-menu-item>
-        
-        <el-menu-item index="/back/user" v-if="userStore.isAdmin">
-          <el-icon><User /></el-icon>
-          <template #title>用户管理</template>
-        </el-menu-item>
-        
+
         <el-menu-item index="/back/profile">
           <el-icon><UserFilled /></el-icon>
           <template #title>个人信息</template>
         </el-menu-item>
-        
+
+        <el-menu-item index="/back/user" v-if="userStore.isAdmin">
+          <el-icon><User /></el-icon>
+          <template #title>用户管理</template>
+        </el-menu-item>
+
+        <el-menu-item index="/back/ticket" v-if="userStore.isAdmin">
+          <el-icon><Ticket /></el-icon>
+          <template #title>门票管理</template>
+        </el-menu-item>
+
         <el-menu-item index="/back/scenic" v-if="userStore.isAdmin">
           <el-icon><Location /></el-icon>
           <template #title>景点管理</template>
@@ -33,7 +38,27 @@
           <el-icon><Menu /></el-icon>
           <template #title>分类管理</template>
         </el-menu-item>
-        
+
+        <el-menu-item index="/back/food" v-if="userStore.isAdmin">
+          <el-icon><Bowl /></el-icon>
+          <template #title>美食管理</template>
+        </el-menu-item>
+
+        <el-menu-item index="/back/accommodation">
+          <el-icon><House /></el-icon>
+          <span>住宿管理</span>
+        </el-menu-item>
+
+        <el-menu-item index="/back/order" v-if="userStore.isAdmin">
+          <el-icon><List /></el-icon>
+          <template #title>订单管理</template>
+        </el-menu-item>
+
+        <el-menu-item index="/back/collection" v-if="userStore.isAdmin">
+          <el-icon><Star /></el-icon>
+          <template #title>收藏管理</template>
+        </el-menu-item>
+
         <el-menu-item index="/back/comment" v-if="userStore.isAdmin">
           <el-icon><ChatDotRound /></el-icon>
           <template #title>评论管理</template>
@@ -43,27 +68,7 @@
           <el-icon><Document /></el-icon>
           <template #title>攻略管理</template>
         </el-menu-item>
-        
-        <el-menu-item index="/back/collection" v-if="userStore.isAdmin">
-          <el-icon><Star /></el-icon>
-          <template #title>收藏管理</template>
-        </el-menu-item>
-        
-        <el-menu-item index="/back/ticket" v-if="userStore.isAdmin">
-          <el-icon><Ticket /></el-icon>
-          <template #title>门票管理</template>
-        </el-menu-item>
-        
-        <el-menu-item index="/back/order" v-if="userStore.isAdmin">
-          <el-icon><List /></el-icon>
-          <template #title>订单管理</template>
-        </el-menu-item>
-        
-        <el-menu-item index="/back/accommodation">
-          <el-icon><House /></el-icon>
-          <span>住宿管理</span>
-        </el-menu-item>
-        
+
         <el-menu-item index="/back/carousel" v-if="userStore.isAdmin">
           <el-icon><Picture /></el-icon>
           <span>轮播图管理</span>
@@ -91,7 +96,8 @@ import {
   Ticket,
   List,
   House,
-  Picture
+  Picture,
+  Bowl
 } from '@element-plus/icons-vue'
 
 const route = useRoute()

@@ -44,9 +44,6 @@ public class TicketService {
                 "SELECT id FROM scenic_spot WHERE city = '" + cityCode + "'");
         }
         
-        // 只查询可预订的门票
-        queryWrapper.eq(Ticket::getStatus, 1);
-        
         // 按创建时间降序排序
         queryWrapper.orderByDesc(Ticket::getCreateTime);
         

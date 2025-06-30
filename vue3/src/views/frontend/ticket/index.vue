@@ -154,12 +154,16 @@
                       <el-icon><Goods /></el-icon>
                       <span>余票 {{ ticket.stock }} 张</span>
                     </div>
+                    <div class="status-info" v-if="ticket.status === 0">
+                      <el-tag type="info" size="small">暂不可预订</el-tag>
+                    </div>
                   </div>
                   <el-button
                     type="primary"
                     class="booking-btn"
+                    :disabled="ticket.status === 0"
                   >
-                    立即预订
+                    {{ ticket.status === 1 ? '立即预订' : '暂不可预订' }}
                   </el-button>
                 </div>
               </div>
@@ -609,28 +613,37 @@ onMounted(() => {
   border-top: 1px solid #e2e8f0;
 }
 
-.stock-info {
+.ticket-meta {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  color: #64748b;
-
-  .el-icon {
-    color: #667eea;
+  gap: 12px;
+  
+  .stock-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #64748b;
+    font-size: 14px;
+  }
+  
+  .status-info {
+    display: flex;
+    align-items: center;
   }
 }
 
 .booking-btn {
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  border: none;
-  border-radius: 20px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  &:disabled {
+    background-color: #e2e8f0;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+    
+    &:hover {
+      background-color: #e2e8f0;
+      border-color: #e2e8f0;
+      color: #94a3b8;
+    }
   }
 }
 

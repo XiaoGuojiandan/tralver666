@@ -75,7 +75,7 @@
         <el-table-column prop="location" label="地区" width="230" align="center">
           <template #default="scope">
             <el-tag size="small" effect="plain" class="location-tag">
-              <i class="el-icon-location"></i> {{ scope.row.location }}
+              <i class="el-icon-location"></i> {{ getLocationDisplay(scope.row.location) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -343,7 +343,7 @@ import { ref, reactive, onMounted, watch, onUnmounted, nextTick } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import { formatDate } from '@/utils/dateUtils'
-import ChinaRegionData from '@/assets/中国地区数据.json'
+import guangxiData from '@/assets/guangxi.json'
 
 const baseAPI = process.env.VUE_APP_BASE_API || '/api'
 
@@ -393,23 +393,8 @@ const pageSize = ref(10)
 const total = ref(0)
 const categoryOptions = ref([])
 
-// 格式化地区数据为级联选择器格式
-const formatRegionData = () => {
-  return ChinaRegionData.map(province => ({
-    value: province.province,
-    label: province.province,
-    children: province.citys.map(city => ({
-      value: city.city,
-      label: city.city,
-      children: city.areas.map(area => ({
-        value: area.area,
-        label: area.area
-      }))
-    }))
-  }))
-}
-
-const regionOptions = ref(formatRegionData())
+// 地区选项
+const regionOptions = ref(guangxiData)
 
 const searchForm = reactive({
   name: '',
@@ -526,7 +511,14 @@ const handleEdit = (row) => {
       scenicForm[key] = row[key]
     }
   })
-  scenicForm.regionValue = parseLocationToRegionValue(row.location)
+  // 从location解析地区值
+  if (row.location) {
+    const cityMatch = guangxiData[0].children.find(city => row.location.startsWith(city.label))
+    if (cityMatch) {
+      const areaMatch = cityMatch.children.find(area => row.location.includes(area.label))
+      scenicForm.regionValue = ['guangxi', cityMatch.value, areaMatch ? areaMatch.value : '']
+    }
+  }
   dialogVisible.value = true
 }
 
@@ -671,14 +663,26 @@ const handleRegionChange = (value) => {
   }
 }
 
-// 处理编辑表单中的地区选择变化
+// 处理表单地区选择变化
 const handleFormRegionChange = (value) => {
-  if (value && value.length > 0) {
-    // 将级联选择的结果拼接为地区字符串
-    scenicForm.location = value.join(' - ')
+  if (value && value.length >= 2) {
+    const city = guangxiData[0].children.find(c => c.value === value[1])
+    const area = city?.children.find(a => a.value === value[2])
+    scenicForm.location = `${city?.label || ''}${area?.label || ''}`
   } else {
     scenicForm.location = ''
   }
+}
+
+// 获取地区显示文本
+const getLocationDisplay = (location) => {
+  if (!location) return ''
+  const cityMatch = guangxiData[0].children.find(city => location.startsWith(city.label))
+  if (cityMatch) {
+    const areaMatch = cityMatch.children.find(area => location.includes(area.label))
+    return `${cityMatch.label}${areaMatch ? areaMatch.label : ''}`
+  }
+  return location
 }
 
 // 当编辑已有景点时，尝试从location字符串解析级联值

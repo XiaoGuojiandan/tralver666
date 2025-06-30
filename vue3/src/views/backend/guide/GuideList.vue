@@ -71,38 +71,40 @@
             <div class="content-preview" v-html="getContentPreview(scope.row.content)"></div>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
-            <el-button 
-              size="small" 
-              type="primary" 
-              :icon="Edit" 
-              plain
-              @click.stop="handleEdit(scope.row)"
-              class="action-btn"
-            >
-              编辑
-            </el-button>
-            <el-button 
-              size="small" 
-              type="danger" 
-              :icon="Delete" 
-              plain
-              @click.stop="deleteGuide(scope.row)"
-              class="action-btn"
-            >
-              删除
-            </el-button>
-            <el-button 
-              size="small" 
-              type="info" 
-              :icon="View" 
-              plain
-              @click.stop="previewGuide(scope.row)"
-              class="action-btn"
-            >
-              预览
-            </el-button>
+            <div class="action-buttons">
+              <el-button 
+                size="small" 
+                type="primary" 
+                :icon="Edit" 
+                plain
+                @click.stop="handleEdit(scope.row)"
+                class="action-btn"
+              >
+                编辑
+              </el-button>
+              <el-button 
+                size="small" 
+                type="info" 
+                :icon="View" 
+                plain
+                @click.stop="previewGuide(scope.row)"
+                class="action-btn"
+              >
+                预览
+              </el-button>
+              <el-button 
+                size="small" 
+                type="danger" 
+                :icon="Delete" 
+                plain
+                @click.stop="deleteGuide(scope.row)"
+                class="action-btn"
+              >
+                删除
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -623,6 +625,17 @@ const handleDialogClose = () => {
           background-color: #f8f9fa;
         }
       }
+      
+      .action-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        
+        .action-btn {
+          flex-shrink: 0;
+        }
+      }
     }
   }
   
@@ -667,44 +680,6 @@ const handleDialogClose = () => {
   .date-text {
     color: #7f8c8d;
     font-size: 12px;
-  }
-  
-  .action-btn {
-    margin-right: 5px;
-  }
-  
-  // 预览样式
-  .guide-preview {
-    padding: 0 20px;
-    
-    .preview-title {
-      font-size: 24px;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    
-    .preview-info {
-      display: flex;
-      justify-content: center;
-      color: #909399;
-      font-size: 14px;
-      margin-bottom: 20px;
-      
-      span {
-        margin: 0 10px;
-      }
-    }
-    
-    .preview-content {
-      line-height: 1.8;
-      font-size: 16px;
-      text-align: left;
-      :deep(img) {
-        max-width: 100%;
-        height: auto;
-      }
-    }
   }
   
   .guide-dialog {

@@ -48,11 +48,12 @@ public class ScenicCategoryController {
     @Operation(summary = "新增分类")
     public Result<Boolean> add(@RequestBody ScenicCategory category) {
         return Result.success(scenicCategoryService.addCategory(category));
-        }
+    }
     
-    @PutMapping
+    @PutMapping("/{id}")
     @Operation(summary = "更新分类")
-    public Result<Boolean> update(@RequestBody ScenicCategory category) {
+    public Result<Boolean> update(@PathVariable Long id, @RequestBody ScenicCategory category) {
+        category.setId(id);
         return Result.success(scenicCategoryService.updateCategory(category));
     }
     

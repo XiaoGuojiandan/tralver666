@@ -1,8 +1,16 @@
 import request from '@/utils/request'
 
-// 获取美食列表
+// 获取美食列表（用户端）
 export function getFoodList(params, config = {}) {
   return request.get('/api/food/list', params, {
+    showDefaultMsg: false,
+    ...config
+  })
+}
+
+// 获取美食列表（管理员端）
+export function getAllFoods(params, config = {}) {
+  return request.get('/api/food/page', params, {
     showDefaultMsg: false,
     ...config
   })
@@ -58,8 +66,8 @@ export function getRecommendedFood(params, config = {}) {
 }
 
 // 根据分类获取美食列表
-export function getFoodByCategory(categoryId, limit = 6, config = {}) {
-  return request.get(`/api/food/category/${categoryId}`, { limit }, {
+export function getFoodsByCategory(categoryId, config = {}) {
+  return request.get(`/api/food/category/${categoryId}`, null, {
     showDefaultMsg: false,
     ...config
   })
@@ -72,48 +80,35 @@ export function getFoodById(id) {
   })
 }
 
-export function getFoodsByCategory(categoryId) {
-  return request({
-    url: `/api/food/category/${categoryId}`,
-    method: 'get'
+// 添加美食
+export function createFood(data, config = {}) {
+  return request.post('/api/food/add', data, {
+    successMsg: '添加成功',
+    ...config
   })
 }
 
-export function createFood(data) {
-  return request({
-    url: '/api/food/add',
-    method: 'post',
-    data
+// 更新美食
+export function updateFood(id, data, config = {}) {
+  return request.put(`/api/food/${id}`, data, {
+    successMsg: '更新成功',
+    ...config
   })
 }
 
-export function updateFood(id, data) {
-  return request({
-    url: `/api/food/${id}`,
-    method: 'put',
-    data
+// 删除美食
+export function deleteFood(id, config = {}) {
+  return request.delete(`/api/food/delete/${id}`, null, {
+    successMsg: '删除成功',
+    ...config
   })
 }
 
-export function deleteFood(id) {
-  return request({
-    url: `/api/food/delete/${id}`,
-    method: 'delete'
-  })
-}
-
-export function getAllFoods() {
-  return request({
-    url: '/api/food/all',
-    method: 'get'
-  })
-}
-
-export function getHotFoods(limit = 4) {
-  return request({
-    url: '/api/food/hot',
-    method: 'get',
-    params: { limit }
+// 获取热门美食
+export function getHotFoods(limit = 4, config = {}) {
+  return request.get('/api/food/hot', { limit }, {
+    showDefaultMsg: false,
+    ...config
   })
 }
 

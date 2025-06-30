@@ -110,10 +110,7 @@
               class="action-btn"
             >
               <i :class="scope.row.status === 1 ? 'el-icon-close' : 'el-icon-check'"></i>
-              {{ scope.row.status === 1 ? '下架' : '上架' }}
-            </el-button>
-            <el-button type="danger" size="small" plain @click="handleDelete(scope.row)" class="action-btn">
-              <i class="el-icon-delete"></i> 删除
+              {{ scope.row.status === 1 ? '停用' : '启用' }}
             </el-button>
           </template>
         </el-table-column>
@@ -422,10 +419,11 @@ const handleEdit = (row) => {
 // 切换门票状态
 const handleToggleStatus = async (row) => {
   const newStatus = row.status === 1 ? 0 : 1
-  const statusText = newStatus === 1 ? '上架' : '下架'
+  const statusText = newStatus === 1 ? '启用' : '停用'
   
   try {
     await request.put(`/ticket/${row.id}`, {
+      ...row,
       status: newStatus
     }, {
       successMsg: `门票${statusText}成功`,
@@ -436,26 +434,6 @@ const handleToggleStatus = async (row) => {
   } catch (error) {
     console.error(`门票${statusText}失败:`, error)
   }
-}
-
-// 删除门票
-const handleDelete = (row) => {
-  ElMessageBox.confirm(`确定要删除门票"${row.ticketName}"吗？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async () => {
-    try {
-      await request.delete(`/ticket/${row.id}`, {
-        successMsg: '门票删除成功',
-        onSuccess: () => {
-          fetchTickets()
-        }
-      })
-    } catch (error) {
-      console.error('删除门票失败:', error)
-    }
-  }).catch(() => {})
 }
 
 // 重置表单

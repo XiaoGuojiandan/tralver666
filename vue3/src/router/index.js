@@ -52,6 +52,11 @@ export const backendRoutes = [
         meta: { title: '攻略管理', icon: 'Document' }
       },
       {
+        path: 'food',
+        component: () => import('@/views/backend/food/index.vue'),
+        meta: { title: '美食管理' }
+      },
+      {
         path: 'collection',
         name: 'CollectionManagement',
         component: () => import('@/views/backend/collection/CollectionList.vue'),

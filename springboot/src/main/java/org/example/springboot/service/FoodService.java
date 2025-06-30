@@ -2,8 +2,7 @@ package org.example.springboot.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import jakarta.annotation.Resource;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.example.springboot.entity.Food;
 import org.example.springboot.entity.FoodCategory;
 import org.example.springboot.entity.Comment;
@@ -14,113 +13,133 @@ import org.example.springboot.mapper.FoodCategoryMapper;
 import org.example.springboot.mapper.CommentMapper;
 import org.example.springboot.mapper.FoodCommentMapper;
 import org.example.springboot.mapper.UserMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 public class FoodService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FoodService.class);
-
-    @Resource
+    @Autowired
     private FoodMapper foodMapper;
 
-    @Resource
-    private FoodCategoryMapper categoryMapper;
+    @Autowired
+    private FoodCategoryService foodCategoryService;
 
-    @Resource
+    @Autowired
+    private FoodCategoryMapper foodCategoryMapper;
+
+    @Autowired
     private CommentMapper commentMapper;
 
-    @Resource
+    @Autowired
     private FoodCommentMapper foodCommentMapper;
 
-    @Resource
+    @Autowired
     private UserMapper userMapper;
 
-    public Page<Food> getFoodList(Integer pageNum, Integer pageSize, String city, Long categoryId, String keyword) {
+    /**
+     * 获取美食详情（包含评分和评论数）
+     */
+    public Food getFoodDetail(Long id) {
+        log.info("开始获取美食详情 - id: {}", id);
+        Food food = foodMapper.getFoodWithStats(id);
+        if (food != null && food.getCategoryId() != null) {
+            log.info("开始获取分类信息 - categoryId: {}", food.getCategoryId());
+            FoodCategory category = foodCategoryService.getById(food.getCategoryId());
+            food.setCategoryInfo(category);
+            log.info("成功获取分类信息 - categoryName: {}", category.getName());
+        }
+        return food;
+    }
+
+    /**
+     * 分页获取美食列表
+     */
+    public Page<Food> getFoodList(String name, Long categoryId, String city, int pageNum, int pageSize) {
+        log.info("开始获取美食列表 - name: {}, categoryId: {}, city: {}, pageNum: {}, pageSize: {}", 
+                name, categoryId, city, pageNum, pageSize);
+        
         Page<Food> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<Food> wrapper = new LambdaQueryWrapper<>();
         
         // 添加查询条件
-        if (StringUtils.isNotBlank(city)) {
-            wrapper.eq(Food::getCity, city);
+        if (StringUtils.hasText(name)) {
+            wrapper.like(Food::getName, name);
         }
         if (categoryId != null) {
             wrapper.eq(Food::getCategoryId, categoryId);
         }
-        if (StringUtils.isNotBlank(keyword)) {
-            wrapper.like(Food::getName, keyword)
-                  .or()
-                  .like(Food::getDescription, keyword);
+        if (StringUtils.hasText(city)) {
+            wrapper.eq(Food::getCity, city);
         }
         
-        // 查询并返回结果
+        // 按创建时间降序排序
+        wrapper.orderByDesc(Food::getCreateTime);
+        
+        // 执行查询
         Page<Food> foodPage = foodMapper.selectPage(page, wrapper);
         
         // 填充分类信息
-        if (foodPage.getRecords() != null && !foodPage.getRecords().isEmpty()) {
-            for (Food food : foodPage.getRecords()) {
-                if (food.getCategoryId() != null) {
-                    food.setCategoryInfo(categoryMapper.selectById(food.getCategoryId()));
-                }
+        foodPage.getRecords().forEach(food -> {
+            if (food.getCategoryId() != null) {
+                food.setCategoryInfo(foodCategoryService.getById(food.getCategoryId()));
             }
-        }
+        });
         
         return foodPage;
     }
 
-    public Food getFoodDetail(Long id) {
-        LOGGER.info("开始从数据库获取美食信息 - id: {}", id);
-        
-        Food food = foodMapper.selectById(id);
-        if (food == null) {
-            LOGGER.warn("数据库中未找到美食 - id: {}", id);
-            return null;
-        }
-        
-        LOGGER.info("成功获取美食基本信息 - name: {}, categoryId: {}", food.getName(), food.getCategoryId());
-        
-        // 获取分类信息
-        if (food.getCategoryId() != null) {
-            LOGGER.info("开始获取分类信息 - categoryId: {}", food.getCategoryId());
-            food.setCategoryInfo(categoryMapper.selectById(food.getCategoryId()));
-            if (food.getCategoryInfo() != null) {
-                LOGGER.info("成功获取分类信息 - categoryName: {}", food.getCategoryInfo().getName());
-            } else {
-                LOGGER.warn("未找到对应的分类信息 - categoryId: {}", food.getCategoryId());
-            }
-        }
-        
-        // 获取评分和评论数
-        LOGGER.info("开始获取评论信息 - foodId: {}", id);
-        LambdaQueryWrapper<FoodComment> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(FoodComment::getFoodId, id);
-        List<FoodComment> comments = foodCommentMapper.selectList(wrapper);
-        
-        if (!comments.isEmpty()) {
-            double avgRating = comments.stream()
-                    .mapToInt(FoodComment::getRating)
-                    .average()
-                    .orElse(0.0);
-            food.setRating(avgRating);
-            food.setReviewCount(comments.size());
-            LOGGER.info("成功获取评论信息 - 评论数: {}, 平均评分: {}", comments.size(), avgRating);
-        } else {
-            LOGGER.info("该美食暂无评论");
-            food.setRating(0.0);
-            food.setReviewCount(0);
-        }
-        
-        return food;
+    /**
+     * 获取热门美食
+     */
+    public List<Food> getHotFoods(Integer limit) {
+        log.info("开始获取热门美食 - limit: {}", limit);
+        return foodMapper.getHotFoods(limit);
+    }
+
+    /**
+     * 根据分类获取美食列表
+     */
+    public List<Food> getFoodsByCategory(Long categoryId, Integer limit) {
+        log.info("开始获取分类美食 - categoryId: {}, limit: {}", categoryId, limit);
+        return foodMapper.getFoodsByCategory(categoryId, limit);
+    }
+
+    /**
+     * 添加美食
+     */
+    @Transactional
+    public boolean addFood(Food food) {
+        log.info("开始添加美食 - name: {}", food.getName());
+        return foodMapper.insert(food) > 0;
+    }
+
+    /**
+     * 更新美食信息
+     */
+    @Transactional
+    public boolean updateFood(Food food) {
+        log.info("开始更新美食 - id: {}, name: {}", food.getId(), food.getName());
+        return foodMapper.updateById(food) > 0;
+    }
+
+    /**
+     * 删除美食
+     */
+    @Transactional
+    public boolean deleteFood(Long id) {
+        log.info("开始删除美食 - id: {}", id);
+        return foodMapper.deleteById(id) > 0;
     }
 
     public List<FoodCategory> getCategoryList() {
-        return categoryMapper.selectList(null);
+        return foodCategoryMapper.selectList(null);
     }
 
     @Transactional
@@ -162,13 +181,16 @@ public class FoodService {
         }
     }
 
+    /**
+     * 获取推荐美食
+     */
     public List<Food> getRecommendedFood(String city, int limit) {
         LambdaQueryWrapper<Food> wrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotBlank(city)) {
+        if (StringUtils.hasText(city)) {
             wrapper.eq(Food::getCity, city);
         }
         wrapper.orderByDesc(Food::getCreateTime)
-               .last("LIMIT " + limit);
+                .last("LIMIT " + limit);
         
         return foodMapper.selectList(wrapper);
     }
@@ -180,22 +202,5 @@ public class FoodService {
                .last("LIMIT " + limit);
         
         return foodMapper.selectList(wrapper);
-    }
-
-    // 基础的CRUD方法
-    public boolean save(Food food) {
-        return foodMapper.insert(food) > 0;
-    }
-
-    public boolean update(Food food) {
-        return foodMapper.updateById(food) > 0;
-    }
-
-    public boolean delete(Long id) {
-        return foodMapper.deleteById(id) > 0;
-    }
-
-    public Food getById(Long id) {
-        return foodMapper.selectById(id);
     }
 } 
