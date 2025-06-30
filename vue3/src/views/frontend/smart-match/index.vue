@@ -229,7 +229,6 @@
                       </el-avatar>
                       <div class="author-info">
                         <span class="author-name">{{ guide.userNickname || '游客' }}</span>
-                        <span class="publish-time">{{ formatTime(guide.createTime) }}</span>
                       </div>
                     </div>
                     <el-button type="primary" link @click="goToDetail('guide', guide.id)">
@@ -292,11 +291,10 @@ const results = reactive({
 
 // 添加图片URL处理函数
 const getImageUrl = (path) => {
-  if (!path) return '/images/no-image.png'
+  if (!path) return require('@/assets/images/no-image.png')
   if (path.startsWith('http')) return path
   // 移除开头的斜杠（如果存在）
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path
-  return `${API_BASE_URL}/api/img/${cleanPath}`
+  return path.startsWith('/') ? `/api${path}` : `/api/${path}`
 }
 
 // 处理HTML内容
