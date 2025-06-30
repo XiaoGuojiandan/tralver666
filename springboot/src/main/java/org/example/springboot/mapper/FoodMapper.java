@@ -40,4 +40,24 @@ public interface FoodMapper extends BaseMapper<Food> {
             "GROUP BY f.id " +
             "LIMIT #{limit}")
     List<Food> getFoodsByCategory(@Param("categoryId") Long categoryId, @Param("limit") Integer limit);
+
+    @Select("SELECT f.* FROM food f " +
+            "WHERE f.name LIKE CONCAT('%', #{keyword}, '%') " +
+            "OR f.description LIKE CONCAT('%', #{keyword}, '%') " +
+            "OR f.location LIKE CONCAT('%', #{keyword}, '%') " +
+            "OR f.city LIKE CONCAT('%', #{keyword}, '%') " +
+            "OR f.business_hours LIKE CONCAT('%', #{keyword}, '%')")
+    List<Food> findByKeyword(String keyword);
+
+    @Select("SELECT f.*, " +
+            "COALESCE(AVG(fc.rating), 0) as rating, " +
+            "COUNT(fc.id) as review_count " +
+            "FROM food f " +
+            "LEFT JOIN food_comment fc ON f.id = fc.food_id " +
+            "WHERE f.city LIKE CONCAT('%', #{location}, '%') " +
+            "OR f.location LIKE CONCAT('%', #{location}, '%') " +
+            "GROUP BY f.id " +
+            "ORDER BY rating DESC " +
+            "LIMIT 10")
+    List<Food> findByLocation(String location);
 } 

@@ -40,9 +40,14 @@
             </el-menu-item>
 
             <el-menu-item index="/guide">
-            <el-icon><Reading /></el-icon>
-            <span>攻略</span>
-          </el-menu-item>
+              <el-icon><Reading /></el-icon>
+              <span>攻略</span>
+            </el-menu-item>
+
+            <el-menu-item index="/smart-match">
+              <el-icon><Compass /></el-icon>
+              <span>智能匹配</span>
+            </el-menu-item>
 
           </el-menu>
           
@@ -108,7 +113,8 @@
     House,
     Place,
     ArrowDown,
-    Bowl
+    Bowl,
+    Compass
   } from '@element-plus/icons-vue'
   
   const userStore = useUserStore()

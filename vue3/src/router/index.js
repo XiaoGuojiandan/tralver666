@@ -216,6 +216,12 @@ const frontendRoutes = [
         name: 'FoodDetail',
         component: () => import('@/views/frontend/food/detail.vue'),
         meta: { title: '美食详情' }
+      },
+      {
+        path: 'smart-match',
+        name: 'SmartMatch',
+        component: () => import('@/views/frontend/smart-match/index.vue'),
+        meta: { title: '智能匹配' }
       }
     ] 
   },
