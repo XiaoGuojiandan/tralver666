@@ -149,9 +149,10 @@
         <el-form-item label="图片" prop="imageUrl">
           <el-upload
             class="food-image-upload"
-            action="/api/file/upload"
+            action="#"
+            :auto-upload="true"
             :show-file-list="false"
-            :on-success="handleImageSuccess"
+            :http-request="customUploadImage"
             :before-upload="beforeImageUpload"
           >
             <img v-if="foodForm.imageUrl" :src="foodForm.imageUrl.startsWith('/') ? `/api${foodForm.imageUrl}` : foodForm.imageUrl" class="preview-image">
@@ -197,6 +198,7 @@ import { Search, Refresh, Plus, Edit, Delete, View, Picture } from '@element-plu
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getAllFoods, createFood, updateFood, deleteFood } from '@/api/food'
 import { getCategoryList } from '@/api/food'
+import request from '@/utils/request'
 
 // 搜索表单
 const searchForm = reactive({
@@ -219,6 +221,7 @@ const isEdit = ref(false)
 const submitLoading = ref(false)
 const foodFormRef = ref(null)
 const foodForm = reactive({
+  id: undefined,
   name: '',
   categoryId: '',
   imageUrl: '',
@@ -303,6 +306,7 @@ const handleEdit = (row) => {
   Object.keys(foodForm).forEach(key => {
     foodForm[key] = row[key]
   })
+  foodForm.id = row.id
   dialogVisible.value = true
 }
 
@@ -344,7 +348,7 @@ const submitForm = async () => {
       submitLoading.value = true
       try {
         const submitFunc = isEdit.value ? updateFood : createFood
-        const res = await submitFunc(isEdit.value ? foodForm.id : null, foodForm)
+        const res = await submitFunc(foodForm.id, foodForm)
         if (res.code === '200') {
           ElMessage.success(isEdit.value ? '更新成功' : '创建成功')
           dialogVisible.value = false
@@ -360,13 +364,48 @@ const submitForm = async () => {
   })
 }
 
+// 自定义上传方法
+const customUploadImage = async (options) => {
+  try {
+    const { file } = options
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    const res = await request.post('/file/upload/img', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        token: localStorage.getItem('token') || ''
+      },
+      transformRequest: [(data) => data],
+      successMsg: '图片上传成功',
+      errorMsg: '图片上传失败'
+    })
+
+    if (res.code === '200') {
+      foodForm.imageUrl = res.data
+      options.onSuccess(res)
+    } else {
+      options.onError(new Error(res.message || '上传失败'))
+    }
+  } catch (error) {
+    console.error('图片上传过程发生错误:', error)
+    options.onError(error)
+  }
+}
+
 // 图片上传相关
 const handleImageSuccess = (res) => {
   if (res.code === '200') {
     foodForm.imageUrl = res.data
+    ElMessage.success('图片上传成功')
   } else {
     ElMessage.error('图片上传失败')
   }
+}
+
+const handleImageError = (error) => {
+  console.error('图片上传失败:', error)
+  ElMessage.error('图片上传失败，请检查网络连接或联系管理员')
 }
 
 const beforeImageUpload = (file) => {

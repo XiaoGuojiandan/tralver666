@@ -179,4 +179,24 @@ public class FoodController {
             return Result.error("根据分类获取美食列表失败: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "更新美食信息")
+    public Result updateFood(@PathVariable Long id, @RequestBody Food food) {
+        try {
+            LOGGER.info("更新美食信息请求 - id: {}, name: {}", id, food.getName());
+            food.setId(id);
+            boolean success = foodService.updateFood(food);
+            if (success) {
+                LOGGER.info("更新美食信息成功 - id: {}", id);
+                return Result.success();
+            } else {
+                LOGGER.warn("更新美食信息失败 - id: {}", id);
+                return Result.error("更新失败");
+            }
+        } catch (Exception e) {
+            LOGGER.error("更新美食信息失败 - id: " + id, e);
+            return Result.error("更新失败: " + e.getMessage());
+        }
+    }
 } 

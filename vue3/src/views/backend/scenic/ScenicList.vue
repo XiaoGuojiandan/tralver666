@@ -71,7 +71,7 @@
             <div class="scenic-name">{{ scope.row.name }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="description" label="描述" width="200" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="description" label="描述" width="250" show-overflow-tooltip></el-table-column>
         <el-table-column prop="location" label="地区" width="230" align="center">
           <template #default="scope">
             <el-tag size="small" effect="plain" class="location-tag">
@@ -130,7 +130,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间"  align="center">
+        <el-table-column prop="createTime" label="创建时间"  align="center" width="200">
           <template #default="scope">
             <span class="date-text">{{ formatDate(scope.row.createTime) }}</span>
           </template>
