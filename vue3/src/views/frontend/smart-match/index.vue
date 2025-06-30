@@ -285,18 +285,14 @@ const handleSearch = async () => {
     console.log('智能匹配响应:', response)
     
     if (!response || !response.data) {
-      throw new Error('返回数据格式错误')
-    }
-    
-    const data = response.data.data
-    if (!data) {
       throw new Error('没有返回数据')
     }
 
-    results.scenicSpots = data.scenicSpots || []
-    results.foods = data.foods || []
-    results.accommodations = data.accommodations || []
-    results.guides = data.guides || []
+    // 直接使用response.data，因为拦截器已经处理了一层响应
+    results.scenicSpots = response.data.scenicSpots || []
+    results.foods = response.data.foods || []
+    results.accommodations = response.data.accommodations || []
+    results.guides = response.data.guides || []
 
     console.log('处理后的结果:', results)
   } catch (error) {
