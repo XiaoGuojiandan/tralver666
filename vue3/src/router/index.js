@@ -199,6 +199,18 @@ const frontendRoutes = [
         name: 'PaymentResult',
         component: () => import('@/views/frontend/payment/payment-result.vue'),
         meta: { title: '支付结果' }
+      },
+      {
+        path: 'food',
+        name: 'FoodList',
+        component: () => import('@/views/frontend/food/FoodList.vue'),
+        meta: { title: '美食' }
+      },
+      {
+        path: 'food/:id',
+        name: 'FoodDetail',
+        component: () => import('@/views/frontend/food/detail.vue'),
+        meta: { title: '美食详情' }
       }
     ] 
   },

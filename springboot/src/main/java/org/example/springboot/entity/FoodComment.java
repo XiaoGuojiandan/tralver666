@@ -1,17 +1,14 @@
 package org.example.springboot.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("comment")
-@Schema(description = "评论实体类")
-public class Comment {
+@TableName("food_comment")
+@Schema(description = "美食评论实体类")
+public class FoodComment {
     @TableId(type = IdType.AUTO)
     @Schema(description = "评论ID")
     private Long id;
@@ -19,11 +16,8 @@ public class Comment {
     @Schema(description = "用户ID")
     private Long userId;
 
-    @Schema(description = "目标ID（景点ID或美食ID）")
-    private Long targetId;
-
-    @Schema(description = "目标类型（scenic或food）")
-    private String targetType;
+    @Schema(description = "美食ID")
+    private Long foodId;
 
     @Schema(description = "评论内容")
     private String content;
@@ -44,12 +38,8 @@ public class Comment {
     @TableField(exist = false)
     @Schema(description = "用户头像")
     private String userAvatar;
-    
-    @Schema(description = "当前用户是否点赞")
+
     @TableField(exist = false)
-    private Boolean liked = false;
-    
-    @Schema(description = "景点名称")
-    @TableField(exist = false)
-    private String scenicName;
+    @Schema(description = "美食名称")
+    private String foodName;
 } 

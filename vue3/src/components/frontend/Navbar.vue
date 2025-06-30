@@ -118,3 +118,6 @@
     }
   }
 } 
+
+<el-menu-item index="/scenic">景点</el-menu-item>
+<el-menu-item index="/food">美食</el-menu-item> 

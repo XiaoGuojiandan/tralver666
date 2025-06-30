@@ -27,12 +27,13 @@ public class CommentService {
     @Resource
     private UserMapper userMapper;
 
-    public Page<Comment> getCommentsByPage(Long scenicId, String scenicName, String userName, String content, Integer currentPage, Integer size) {
+    public Page<Comment> getCommentsByPage(Long targetId, String scenicName, String userName, String content, Integer currentPage, Integer size) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         
-        // 如果提供了景点ID，直接使用ID查询
-        if (scenicId != null) {
-            queryWrapper.eq(Comment::getScenicId, scenicId);
+        // 如果提供了目标ID，直接使用ID查询
+        if (targetId != null) {
+            queryWrapper.eq(Comment::getTargetId, targetId)
+                       .eq(Comment::getTargetType, "scenic");
         } 
         // 如果提供了景点名称，先查询景点ID，再使用ID查询评论
         else if (StringUtils.isNotBlank(scenicName)) {
@@ -41,7 +42,8 @@ public class CommentService {
                 // 如果没有找到匹配的景点，返回空结果
                 return new Page<>(currentPage, size);
             }
-            queryWrapper.in(Comment::getScenicId, scenicIds);
+            queryWrapper.in(Comment::getTargetId, scenicIds)
+                       .eq(Comment::getTargetType, "scenic");
         }
         
         // 如果提供了用户名/昵称，先查询用户ID，再使用ID查询评论
@@ -116,6 +118,10 @@ public class CommentService {
     }
 
     public List<Comment> getAllByScenicId(Long scenicId) {
-        return commentMapper.selectList(new LambdaQueryWrapper<Comment>().eq(Comment::getScenicId, scenicId));
+        return commentMapper.selectList(
+            new LambdaQueryWrapper<Comment>()
+                .eq(Comment::getTargetId, scenicId)
+                .eq(Comment::getTargetType, "scenic")
+        );
     }
 } 

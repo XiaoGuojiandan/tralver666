@@ -38,13 +38,13 @@ public class CommentController {
     @Operation(summary = "分页查询评论")
     @GetMapping("/page")
     public Result<?> getCommentsByPage(
-            @RequestParam(required = false) Long scenicId,
+            @RequestParam(required = false) Long targetId,
             @RequestParam(required = false) String scenicName,
             @RequestParam(required = false) String userName,
             @RequestParam(required = false) String content,
             @RequestParam(defaultValue = "1") Integer currentPage,
             @RequestParam(defaultValue = "10") Integer size) {
-        Page<Comment> page = commentService.getCommentsByPage(scenicId, scenicName, userName, content, currentPage, size);
+        Page<Comment> page = commentService.getCommentsByPage(targetId, scenicName, userName, content, currentPage, size);
         // 批量查用户
         List<Long> userIds = page.getRecords().stream().map(Comment::getUserId).distinct().toList();
         List<User> users = userService.getUsersByIds(userIds);
@@ -61,13 +61,21 @@ public class CommentController {
         }
         
         // 批量查询景点信息
-        List<Long> scenicIds = page.getRecords().stream().map(Comment::getScenicId).distinct().toList();
-        List<ScenicSpot> scenicSpots = scenicSpotService.getScenicSpotsByIds(scenicIds);
-        for (Comment c : page.getRecords()) {
-            scenicSpots.stream()
-                .filter(s -> s.getId().equals(c.getScenicId()))
-                .findFirst()
-                .ifPresent(s -> c.setScenicName(s.getName()));
+        List<Long> scenicIds = page.getRecords().stream()
+                .filter(c -> "scenic".equals(c.getTargetType()))
+                .map(Comment::getTargetId)
+                .distinct()
+                .toList();
+        if (!scenicIds.isEmpty()) {
+            List<ScenicSpot> scenicSpots = scenicSpotService.getScenicSpotsByIds(scenicIds);
+            for (Comment c : page.getRecords()) {
+                if ("scenic".equals(c.getTargetType())) {
+                    scenicSpots.stream()
+                        .filter(s -> s.getId().equals(c.getTargetId()))
+                        .findFirst()
+                        .ifPresent(s -> c.setScenicName(s.getName()));
+                }
+            }
         }
         
         // 批量查询点赞状态

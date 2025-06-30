@@ -24,6 +24,11 @@
               <span>景点</span>
             </el-menu-item>
 
+            <el-menu-item index="/food">
+              <el-icon><Bowl /></el-icon>
+              <span>美食</span>
+            </el-menu-item>
+
             <el-menu-item index="/tickets">
               <el-icon><Ticket /></el-icon>
               <span>门票预订</span>
@@ -102,7 +107,8 @@
     Ticket,
     House,
     Place,
-    ArrowDown
+    ArrowDown,
+    Bowl
   } from '@element-plus/icons-vue'
   
   const userStore = useUserStore()

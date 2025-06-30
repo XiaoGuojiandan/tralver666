@@ -730,7 +730,7 @@ const handleCitySelect = (city) => {
     }
 
     &.price {
-      background: rgba(239, 68, 68, 0.9);
+      background: rgba(234, 78, 78, 0.9);
       color: white;
     }
   }

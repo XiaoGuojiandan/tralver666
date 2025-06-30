@@ -81,4 +81,34 @@ export default class DateUtils {
 export const formatDate = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
   if (!date) return '';
   return DateUtils.format(date, format);
+}
+
+export function formatTime(time) {
+  if (!time) return ''
+  
+  const date = new Date(time)
+  const now = new Date()
+  const diff = (now - date) / 1000 // 转换为秒
+  
+  if (diff < 60) {
+    return '刚刚'
+  } else if (diff < 3600) {
+    return Math.floor(diff / 60) + '分钟前'
+  } else if (diff < 86400) {
+    return Math.floor(diff / 3600) + '小时前'
+  } else if (diff < 2592000) {
+    return Math.floor(diff / 86400) + '天前'
+  } else {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    
+    if (year === now.getFullYear()) {
+      return `${month}-${day} ${hours}:${minutes}`
+    } else {
+      return `${year}-${month}-${day} ${hours}:${minutes}`
+    }
+  }
 } 
