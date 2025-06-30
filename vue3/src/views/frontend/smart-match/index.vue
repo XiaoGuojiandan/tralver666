@@ -296,7 +296,7 @@ const getImageUrl = (path) => {
   if (path.startsWith('http')) return path
   // 移除开头的斜杠（如果存在）
   const cleanPath = path.startsWith('/') ? path.slice(1) : path
-  return `/api/img/${cleanPath}`
+  return `${API_BASE_URL}/api/img/${cleanPath}`
 }
 
 // 处理HTML内容

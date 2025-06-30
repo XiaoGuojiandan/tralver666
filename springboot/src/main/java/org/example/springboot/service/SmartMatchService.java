@@ -4,10 +4,12 @@ import org.example.springboot.mapper.ScenicSpotMapper;
 import org.example.springboot.mapper.FoodMapper;
 import org.example.springboot.mapper.AccommodationMapper;
 import org.example.springboot.mapper.TravelGuideMapper;
+import org.example.springboot.mapper.UserMapper;
 import org.example.springboot.entity.ScenicSpot;
 import org.example.springboot.entity.Food;
 import org.example.springboot.entity.Accommodation;
 import org.example.springboot.entity.TravelGuide;
+import org.example.springboot.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,9 @@ public class SmartMatchService {
 
     @Autowired
     private TravelGuideMapper travelGuideMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     // 预定义的关键词类别映射
     private static final Map<String, List<String>> CATEGORY_KEYWORDS = new HashMap<String, List<String>>() {{
@@ -168,6 +173,19 @@ public class SmartMatchService {
             result.put("scenicSpots", rankResults(scenicSpots, query, categoryScores));
             result.put("foods", rankResults(foods, query, categoryScores));
             result.put("accommodations", rankResults(accommodations, query, categoryScores));
+            
+            // Fill user information for guides
+            if (guides != null && !guides.isEmpty()) {
+                for (TravelGuide guide : guides) {
+                    if (guide.getUserId() != null) {
+                        User user = userMapper.selectById(guide.getUserId());
+                        if (user != null) {
+                            guide.setUserNickname(user.getNickname());
+                            guide.setUserAvatar(user.getAvatar());
+                        }
+                    }
+                }
+            }
             result.put("guides", rankResults(guides, query, categoryScores));
             
             // 8. 添加搜索上下文信息
