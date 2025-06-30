@@ -221,11 +221,16 @@
                 </el-image>
                 <div class="item-info">
                   <h3>{{ guide.title }}</h3>
-                  <p class="description">{{ guide.summary }}</p>
+                  <p class="description">{{ stripHtml(guide.content).slice(0, 100) }}...</p>
                   <div class="item-footer">
                     <div class="author">
-                      <el-avatar :size="24" :src="guide.authorAvatar">{{ guide.authorName?.[0] }}</el-avatar>
-                      <span>{{ guide.authorName }}</span>
+                      <el-avatar :size="24" :src="guide.userAvatar">
+                        {{ guide.userNickname?.[0] || '游' }}
+                      </el-avatar>
+                      <div class="author-info">
+                        <span class="author-name">{{ guide.userNickname || '游客' }}</span>
+                        <span class="publish-time">{{ formatTime(guide.createTime) }}</span>
+                      </div>
                     </div>
                     <el-button type="primary" link @click="goToDetail('guide', guide.id)">
                       查看详情 <el-icon><ArrowRight /></el-icon>
@@ -245,13 +250,16 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Search, Magic, Collection, Picture, ArrowRight } from '@element-plus/icons-vue'
 import { getSmartRecommendations } from '@/api/smart-match'
+import { formatTime } from '@/utils/dateUtils'
 
-const API_BASE_URL = 'http://localhost:1236' // 添加API基础URL
+const API_BASE_URL = 'http://localhost:1236'
+
+const STORAGE_KEY = 'smart_match_state'
 
 const router = useRouter()
 const searchQuery = ref('')
@@ -281,6 +289,21 @@ const results = reactive({
   accommodations: [],
   guides: []
 })
+
+// 添加图片URL处理函数
+const getImageUrl = (path) => {
+  if (!path) return '/images/no-image.png'
+  if (path.startsWith('http')) return path
+  // 移除开头的斜杠（如果存在）
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path
+  return `/api/img/${cleanPath}`
+}
+
+// 处理HTML内容
+const stripHtml = (html) => {
+  if (!html) return ''
+  return html.replace(/<[^>]*>/g, '')
+}
 
 const handleSearch = async () => {
   if (!searchQuery.value.trim()) {
@@ -321,34 +344,82 @@ const handleTagClick = (tag) => {
   handleSearch()
 }
 
-const getImageUrl = (path) => {
-  if (!path) return ''
-  // 如果已经是完整URL，直接返回
-  if (path.startsWith('http')) return path
-  // 否则拼接API基础URL
-  return `${API_BASE_URL}/files${path}`
+// 保存状态到localStorage
+const saveState = () => {
+  const state = {
+    searchQuery: searchQuery.value,
+    showResults: showResults.value,
+    results: {
+      scenicSpots: results.scenicSpots,
+      foods: results.foods,
+      accommodations: results.accommodations,
+      guides: results.guides
+    }
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
 }
 
-const goToDetail = (type, id) => {
-  const routes = {
-    scenic: `/scenic/${id}`,
-    food: `/food/detail/${id}`,
-    accommodation: `/accommodation/detail/${id}`,
-    guide: `/guide/detail/${id}`
+// 从localStorage恢复状态
+const restoreState = () => {
+  const savedState = localStorage.getItem(STORAGE_KEY)
+  if (savedState) {
+    const state = JSON.parse(savedState)
+    searchQuery.value = state.searchQuery
+    showResults.value = state.showResults
+    results.scenicSpots = state.results.scenicSpots
+    results.foods = state.results.foods
+    results.accommodations = state.results.accommodations
+    results.guides = state.results.guides
   }
-  
-  if (!routes[type]) {
-    ElMessage.warning('无效的跳转类型')
-    return
-  }
+}
 
+// 在组件挂载时恢复状态
+onMounted(() => {
+  restoreState()
+})
+
+const goToDetail = (type, id) => {
   if (!id) {
     ElMessage.warning('无效的ID')
     return
   }
 
-  router.push(routes[type])
+  // 在跳转前保存状态
+  saveState()
+
+  const routes = {
+    scenic: `/scenic/${id}`,
+    food: `/food/detail/${id}`,
+    accommodation: `/accommodation/${id}`,
+    guide: `/guide/detail/${id}`
+  }
+
+  const route = routes[type]
+  if (!route) {
+    ElMessage.warning('无效的跳转类型')
+    return
+  }
+
+  router.push(route)
 }
+
+// 在组件即将卸载时清除状态
+// 但如果是跳转到详情页，我们已经保存了状态
+// 所以这里我们需要检查路由
+const clearStateIfNeeded = () => {
+  const currentPath = router.currentRoute.value.path
+  // 如果不是跳转到详情页，则清除状态
+  if (!currentPath.includes('/scenic/') && 
+      !currentPath.includes('/food/detail/') && 
+      !currentPath.includes('/accommodation/') && 
+      !currentPath.includes('/guide/detail/')) {
+    localStorage.removeItem(STORAGE_KEY)
+  }
+}
+
+onBeforeUnmount(() => {
+  clearStateIfNeeded()
+})
 </script>
 
 <style scoped lang="scss">
@@ -745,6 +816,29 @@ const goToDetail = (type, id) => {
           height: 70px;
         }
       }
+    }
+  }
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .author-name {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .publish-time {
+      font-size: 12px;
+      color: #999;
     }
   }
 }
