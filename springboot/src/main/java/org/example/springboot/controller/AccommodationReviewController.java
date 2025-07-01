@@ -6,10 +6,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.example.springboot.common.Result;
 import org.example.springboot.entity.AccommodationReview;
+import org.example.springboot.entity.User;
 import org.example.springboot.service.AccommodationReviewService;
+import org.example.springboot.util.JwtTokenUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @Tag(name = "住宿评价接口")
 @RestController
@@ -21,62 +25,54 @@ public class AccommodationReviewController {
     @Resource
     private AccommodationReviewService reviewService;
     
-    @Operation(summary = "分页查询住宿评价")
+    @Operation(summary = "分页查询评价")
     @GetMapping("/page")
-    public Result<?> getReviewsByPage(
-            @RequestParam Integer accommodationId,
-            @RequestParam(defaultValue = "1") Integer currentPage,
+    public Result<Page<AccommodationReview>> page(
+            @RequestParam(required = false) Long accommodationId,
+            @RequestParam(defaultValue = "1") Integer current,
             @RequestParam(defaultValue = "10") Integer size) {
-        
-        try {
-            LOGGER.info("分页查询住宿评价，参数：accommodationId={}, page={}, size={}",
-                    accommodationId, currentPage, size);
-            
-            Page<AccommodationReview> page = reviewService.getReviewsByPage(
-                    accommodationId, currentPage, size);
-            
-            return Result.success(page);
-        } catch (Exception e) {
-            LOGGER.error("查询住宿评价失败", e);
-            return Result.error("查询住宿评价失败：" + e.getMessage());
-        }
+        Page<AccommodationReview> page = new Page<>(current, size);
+        return Result.success(reviewService.page(page, accommodationId));
     }
     
-    @Operation(summary = "添加住宿评价")
+    @Operation(summary = "添加评价")
     @PostMapping
-    public Result<?> addReview(@RequestBody AccommodationReview review) {
-        try {
-            LOGGER.info("添加住宿评价：{}", review);
-            
-            boolean result = reviewService.addReview(review);
-            
-            if (result) {
-                return Result.success(review);
-            } else {
-                return Result.error("添加住宿评价失败");
-            }
-        } catch (Exception e) {
-            LOGGER.error("添加住宿评价失败", e);
-            return Result.error("添加住宿评价失败：" + e.getMessage());
+    public Result<?> add(@RequestBody AccommodationReview review) {
+        // 获取当前登录用户
+        User currentUser = JwtTokenUtils.getCurrentUser();
+        if (currentUser == null) {
+            return Result.error("用户未登录");
         }
+
+        // 设置用户ID和创建时间
+        review.setUserId(currentUser.getId());
+        review.setCreateTime(LocalDateTime.now());
+
+        if (reviewService.save(review)) {
+            return Result.success();
+        }
+        return Result.error("添加失败");
     }
     
-    @Operation(summary = "删除住宿评价")
+    @Operation(summary = "删除评价")
     @DeleteMapping("/{id}")
-    public Result<?> deleteReview(@PathVariable Integer id) {
-        try {
-            LOGGER.info("删除住宿评价，id={}", id);
-            
-            boolean result = reviewService.deleteReview(id);
-            
-            if (result) {
-                return Result.success();
-            } else {
-                return Result.error("删除住宿评价失败，可能无权限或评价不存在");
-            }
-        } catch (Exception e) {
-            LOGGER.error("删除住宿评价失败", e);
-            return Result.error("删除住宿评价失败：" + e.getMessage());
+    public Result<?> delete(@PathVariable Long id) {
+        // 获取评价信息
+        AccommodationReview review = reviewService.getById(id);
+        if (review == null) {
+            return Result.error("评价不存在");
         }
+
+        // 检查权限（只有管理员或评价的发布者可以删除）
+        User currentUser = JwtTokenUtils.getCurrentUser();
+        if (currentUser == null || 
+            (!currentUser.getRoleCode().equals("ADMIN") && !currentUser.getId().equals(review.getUserId()))) {
+            return Result.error("无权限删除");
+        }
+
+        if (reviewService.removeById(id)) {
+            return Result.success();
+        }
+        return Result.error("删除失败");
     }
 } 

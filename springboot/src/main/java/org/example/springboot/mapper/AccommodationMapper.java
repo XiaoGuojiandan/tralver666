@@ -24,4 +24,7 @@ public interface AccommodationMapper extends BaseMapper<Accommodation> {
             "OR a.address LIKE CONCAT('%', #{location}, '%') " +
             "ORDER BY a.star_level DESC LIMIT 10")
     List<Accommodation> findByLocation(String location);
+
+    @Select("SELECT * FROM accommodation WHERE name = #{name}")
+    List<Accommodation> findExactMatch(String name);
 } 

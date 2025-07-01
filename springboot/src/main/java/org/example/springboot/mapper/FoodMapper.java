@@ -60,4 +60,7 @@ public interface FoodMapper extends BaseMapper<Food> {
             "ORDER BY rating DESC " +
             "LIMIT 10")
     List<Food> findByLocation(String location);
+
+    @Select("SELECT * FROM food WHERE name = #{name}")
+    List<Food> findExactMatch(String name);
 } 

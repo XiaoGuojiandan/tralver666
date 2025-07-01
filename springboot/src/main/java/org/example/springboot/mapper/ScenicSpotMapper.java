@@ -9,20 +9,25 @@ import java.util.List;
 @Mapper
 public interface ScenicSpotMapper extends BaseMapper<ScenicSpot> {
 
-    @Select("SELECT s.* FROM scenic_spot s " +
-            "LEFT JOIN scenic_category c ON s.category_id = c.id " +
-            "WHERE s.name LIKE CONCAT('%', #{keyword}, '%') " +
-            "OR s.description LIKE CONCAT('%', #{keyword}, '%') " +
-            "OR s.location LIKE CONCAT('%', #{keyword}, '%') " +
-            "OR s.city LIKE CONCAT('%', #{keyword}, '%')")
+    @Select("SELECT * FROM scenic_spot WHERE name = #{keyword}")
+    List<ScenicSpot> findExactMatch(String keyword);
+
+    @Select("SELECT * FROM scenic_spot WHERE " +
+            "name LIKE CONCAT('%', #{keyword}, '%') OR " +
+            "description LIKE CONCAT('%', #{keyword}, '%') OR " +
+            "location LIKE CONCAT('%', #{keyword}, '%')")
     List<ScenicSpot> findByKeyword(String keyword);
 
-    @Select("SELECT s.*, IFNULL(AVG(c.rating), 0) as rating " +
-            "FROM scenic_spot s " +
-            "LEFT JOIN comment c ON s.id = c.scenic_id " +
-            "WHERE s.city LIKE CONCAT('%', #{location}, '%') " +
-            "OR s.location LIKE CONCAT('%', #{location}, '%') " +
-            "GROUP BY s.id " +
-            "ORDER BY rating DESC LIMIT 10")
+    @Select("SELECT * FROM scenic_spot WHERE location LIKE CONCAT('%', #{location}, '%')")
     List<ScenicSpot> findByLocation(String location);
+
+    @Select("SELECT s.*, c.name as category_name, c.description as category_description " +
+            "FROM scenic_spot s " +
+            "LEFT JOIN scenic_category c ON s.category_id = c.id " +
+            "WHERE s.name LIKE CONCAT('%', #{keyword}, '%') OR " +
+            "s.description LIKE CONCAT('%', #{keyword}, '%') OR " +
+            "s.location LIKE CONCAT('%', #{keyword}, '%') OR " +
+            "c.name LIKE CONCAT('%', #{keyword}, '%') OR " +
+            "c.description LIKE CONCAT('%', #{keyword}, '%')")
+    List<ScenicSpot> findByKeywordWithCategory(String keyword);
 } 

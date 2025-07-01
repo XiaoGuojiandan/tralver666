@@ -4,12 +4,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.example.springboot.common.Result;
 import org.example.springboot.service.SmartMatchService;
+import org.example.springboot.entity.TravelGuide;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -41,6 +43,16 @@ public class SmartMatchController {
             
             log.info("智能匹配成功，返回结果统计: 景点={}, 美食={}, 住宿={}, 攻略={}", 
                 scenicCount, foodCount, accommodationCount, guideCount);
+
+            // 打印攻略详细信息
+            if (recommendations.containsKey("guides")) {
+                List<TravelGuide> guides = (List<TravelGuide>) recommendations.get("guides");
+                for (TravelGuide guide : guides) {
+                    log.info("攻略信息 - ID: {}, 标题: {}, 用户ID: {}, 用户昵称: {}, 用户头像: {}", 
+                        guide.getId(), guide.getTitle(), guide.getUserId(), 
+                        guide.getUserNickname(), guide.getUserAvatar());
+                }
+            }
             
             return Result.success(recommendations);
         } catch (Exception e) {

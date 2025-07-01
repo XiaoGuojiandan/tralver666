@@ -1,76 +1,78 @@
 package org.example.springboot.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.apache.commons.lang3.StringUtils;
 import org.example.springboot.common.Result;
 import org.example.springboot.entity.Accommodation;
 import org.example.springboot.service.AccommodationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Tag(name = "住宿管理接口")
+@Tag(name = "住宿接口")
 @RestController
 @RequestMapping("/accommodation")
 public class AccommodationController {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccommodationController.class);
-    
+
     @Resource
     private AccommodationService accommodationService;
-    
-    @Operation(summary = "分页查询住宿列表")
+
+    @Operation(summary = "分页查询")
     @GetMapping("/page")
     public Result<Page<Accommodation>> page(
-            @RequestParam(defaultValue = "1") Integer currentPage,
-            @RequestParam(defaultValue = "12") Integer size,
+            @RequestParam(defaultValue = "1") Integer current,
+            @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String priceRange,
             @RequestParam(required = false) BigDecimal minStarLevel,
             @RequestParam(required = false) Long scenicId,
             @RequestParam(required = false) String city,
-            @RequestParam(required = false) String province
-    ) {
-        Page<Accommodation> page = new Page<>(currentPage, size);
+            @RequestParam(required = false) String province) {
+        Page<Accommodation> page = new Page<>(current, size);
         return Result.success(accommodationService.page(page, name, type, priceRange, 
                 minStarLevel, scenicId, city, province));
     }
-    
-    @Operation(summary = "获取住宿详情")
+
+    @Operation(summary = "根据ID查询")
     @GetMapping("/{id}")
     public Result<Accommodation> getById(@PathVariable Long id) {
         return Result.success(accommodationService.getById(id));
     }
-    
-    @Operation(summary = "添加住宿")
+
+    @Operation(summary = "新增")
     @PostMapping
-    public Result<Boolean> save(@RequestBody Accommodation accommodation) {
-        return Result.success(accommodationService.save(accommodation));
+    public Result<?> save(@RequestBody Accommodation accommodation) {
+        if (accommodationService.save(accommodation)) {
+            return Result.success();
+        }
+        return Result.error("保存失败");
     }
-    
-    @Operation(summary = "更新住宿")
+
+    @Operation(summary = "修改")
     @PutMapping
-    public Result<Boolean> update(@RequestBody Accommodation accommodation) {
-        return Result.success(accommodationService.updateById(accommodation));
+    public Result<?> update(@RequestBody Accommodation accommodation) {
+        if (accommodationService.updateById(accommodation)) {
+            return Result.success();
+        }
+        return Result.error("修改失败");
     }
-    
-    @Operation(summary = "删除住宿")
+
+    @Operation(summary = "删除")
     @DeleteMapping("/{id}")
-    public Result<Boolean> removeById(@PathVariable Long id) {
-        return Result.success(accommodationService.removeById(id));
+    public Result<?> delete(@PathVariable Long id) {
+        if (accommodationService.removeById(id)) {
+            return Result.success();
+        }
+        return Result.error("删除失败");
     }
-    
-    @Operation(summary = "获取住宿类型列表")
+
+    @Operation(summary = "获取所有住宿类型")
     @GetMapping("/types")
-    public Result<List<String>> getAccommodationTypes() {
-        return Result.success(accommodationService.getAccommodationTypes());
+    public Result<List<String>> getAllTypes() {
+        return Result.success(accommodationService.getAllTypes());
     }
 } 

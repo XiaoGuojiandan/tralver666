@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.example.springboot.entity.Accommodation;
+import org.example.springboot.entity.AccommodationReview;
 import org.example.springboot.entity.ScenicSpot;
 import org.example.springboot.mapper.AccommodationMapper;
 import org.example.springboot.mapper.AccommodationReviewMapper;
@@ -65,12 +66,26 @@ public class AccommodationService {
                 if (accommodation.getScenicId() != null) {
                     accommodation.setScenicName(scenicNameMap.get(accommodation.getScenicId()));
                 }
+                
+                // 获取评论数
+                LambdaQueryWrapper<AccommodationReview> reviewWrapper = new LambdaQueryWrapper<>();
+                reviewWrapper.eq(AccommodationReview::getAccommodationId, accommodation.getId());
+                Long count = reviewMapper.selectCount(reviewWrapper);
+                accommodation.setReviewCount(count);
+                
+                // 计算平均评分
+                if (count > 0) {
+                    Double avgRating = reviewMapper.getAverageRating(accommodation.getId());
+                    if (avgRating != null) {
+                        accommodation.setRating(avgRating);
+                    }
+                }
             });
         }
         
         return resultPage;
     }
-    
+
     /**
      * 获取住宿详情
      */
@@ -83,40 +98,47 @@ public class AccommodationService {
                 accommodation.setScenicName(scenicSpot.getName());
             }
             
-            // 查询评价数量
-            LambdaQueryWrapper<org.example.springboot.entity.AccommodationReview> reviewWrapper = new LambdaQueryWrapper<>();
-            reviewWrapper.eq(org.example.springboot.entity.AccommodationReview::getAccommodationId, id);
+            // 查询评价数量和平均评分
+            LambdaQueryWrapper<AccommodationReview> reviewWrapper = new LambdaQueryWrapper<>();
+            reviewWrapper.eq(AccommodationReview::getAccommodationId, id);
             Long reviewCount = reviewMapper.selectCount(reviewWrapper);
             accommodation.setReviewCount(reviewCount);
+            
+            if (reviewCount > 0) {
+                Double avgRating = reviewMapper.getAverageRating(id);
+                if (avgRating != null) {
+                    accommodation.setRating(avgRating);
+                }
+            }
         }
         return accommodation;
     }
-    
+
     /**
-     * 添加住宿信息
+     * 保存住宿信息
      */
     public boolean save(Accommodation accommodation) {
         return accommodationMapper.insert(accommodation) > 0;
     }
-    
+
     /**
      * 更新住宿信息
      */
     public boolean updateById(Accommodation accommodation) {
         return accommodationMapper.updateById(accommodation) > 0;
     }
-    
+
     /**
      * 删除住宿信息
      */
     public boolean removeById(Long id) {
         return accommodationMapper.deleteById(id) > 0;
     }
-    
+
     /**
-     * 获取住宿类型列表
+     * 获取所有住宿类型
      */
-    public List<String> getAccommodationTypes() {
+    public List<String> getAllTypes() {
         LambdaQueryWrapper<Accommodation> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.select(Accommodation::getType);
         queryWrapper.groupBy(Accommodation::getType);

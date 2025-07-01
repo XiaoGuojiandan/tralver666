@@ -44,7 +44,7 @@
         style="width: 100%"
       >
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="名称" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="name" label="名称" min-width="100" show-overflow-tooltip />
         <el-table-column label="图片" width="120">
           <template #default="scope">
             <el-image 
@@ -68,9 +68,9 @@
         <el-table-column prop="categoryInfo.name" label="分类" width="120" />
         <el-table-column prop="priceRange" label="价格区间" width="120" />
         <el-table-column prop="city" label="城市" width="120" />
-        <el-table-column prop="location" label="地址" min-width="200" show-overflow-tooltip />
+        <el-table-column prop="location" label="地址" min-width="150" show-overflow-tooltip />
         <el-table-column prop="businessHours" label="营业时间" width="150" show-overflow-tooltip />
-        <el-table-column label="操作" width="280" fixed="right">
+        <el-table-column label="操作" width="200" fixed="right">
           <template #default="scope">
             <div class="action-buttons">
               <el-button 
@@ -81,15 +81,6 @@
                 @click="handleEdit(scope.row)"
               >
                 编辑
-              </el-button>
-              <el-button 
-                size="small" 
-                type="success" 
-                :icon="View"
-                plain
-                @click="handleView(scope.row)"
-              >
-                查看
               </el-button>
               <el-button 
                 size="small" 
@@ -165,7 +156,7 @@
         <el-form-item label="城市" prop="city">
           <el-input v-model="foodForm.city" placeholder="请输入所在城市" />
         </el-form-item>
-        <el-form-item label="地址" prop="location">
+        <el-form-item label="地址" prop="location" >
           <el-input v-model="foodForm.location" placeholder="请输入详细地址" />
         </el-form-item>
         <el-form-item label="营业时间" prop="businessHours">
@@ -310,10 +301,6 @@ const handleEdit = (row) => {
   dialogVisible.value = true
 }
 
-// 查看
-const handleView = (row) => {
-  window.open(`/food/detail/${row.id}`, '_blank')
-}
 
 // 删除
 const handleDelete = (row) => {
