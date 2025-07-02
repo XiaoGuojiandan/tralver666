@@ -110,16 +110,17 @@ const searchForm = reactive({
 const fetchCollections = async () => {
   loading.value = true
   try {
-    await request.get('/collection/admin/page', {
-      username: searchForm.username,
-      guideTitle: searchForm.guideTitle,
-      currentPage: currentPage.value,
-      size: pageSize.value
-    }, {
+    const params = new URLSearchParams()
+    params.append('username', searchForm.username || '')
+    params.append('guideTitle', searchForm.guideTitle || '')
+    params.append('currentPage', currentPage.value)
+    params.append('size', pageSize.value)
+
+    await request.get(`/collection/admin/page?${params.toString()}`, null, {
       showDefaultMsg: false,
       onSuccess: (res) => {
-        tableData.value = res.records||[]
-        total.value = res.total||0
+        tableData.value = res.records || []
+        total.value = res.total || 0
       }
     })
   } catch (error) {
@@ -152,7 +153,7 @@ const handleDelete = (row) => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    request.delete(`/collection/admin/${row.id}`,  {
+    request.delete(`/collection/admin/${row.id}`, {
       successMsg: '删除成功',
       onSuccess: () => {
         fetchCollections()

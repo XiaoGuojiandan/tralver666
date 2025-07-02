@@ -1,0 +1,177 @@
+[
+  {
+    "value": "guangxi",
+    "label": "广西壮族自治区",
+    "children": [
+      {
+        "value": "nanning",
+        "label": "南宁市",
+        "children": [
+          { "value": "qingxiu", "label": "青秀区" },
+          { "value": "xingning", "label": "兴宁区" },
+          { "value": "jiangnan", "label": "江南区" },
+          { "value": "xixiangtang", "label": "西乡塘区" },
+          { "value": "liangqing", "label": "良庆区" },
+          { "value": "yongning", "label": "邕宁区" },
+          { "value": "wuming", "label": "武鸣区" }
+        ]
+      },
+      {
+        "value": "liuzhou",
+        "label": "柳州市",
+        "children": [
+          { "value": "chengzhong", "label": "城中区" },
+          { "value": "yufeng", "label": "鱼峰区" },
+          { "value": "liubei", "label": "柳北区" },
+          { "value": "liunan", "label": "柳南区" },
+          { "value": "liujiang", "label": "柳江区" }
+        ]
+      },
+      {
+        "value": "guilin",
+        "label": "桂林市",
+        "children": [
+          { "value": "xiufeng", "label": "秀峰区" },
+          { "value": "diecai", "label": "叠彩区" },
+          { "value": "xiangshan", "label": "象山区" },
+          { "value": "qixing", "label": "七星区" },
+          { "value": "yanshan", "label": "雁山区" },
+          { "value": "lingui", "label": "临桂区" }
+        ]
+      },
+      {
+        "value": "wuzhou",
+        "label": "梧州市",
+        "children": [
+          { "value": "wanxiu", "label": "万秀区" },
+          { "value": "changzhou", "label": "长洲区" },
+          { "value": "cangwu", "label": "苍梧区" },
+          { "value": "tengxian", "label": "藤县" }
+        ]
+      },
+      {
+        "value": "beihai",
+        "label": "北海市",
+        "children": [
+          { "value": "haicheng", "label": "海城区" },
+          { "value": "yinhai", "label": "银海区" },
+          { "value": "tieshangang", "label": "铁山港区" },
+          { "value": "hepu", "label": "合浦县" }
+        ]
+      },
+      {
+        "value": "fangchenggang",
+        "label": "防城港市",
+        "children": [
+          { "value": "gangkou", "label": "港口区" },
+          { "value": "fangcheng", "label": "防城区" },
+          { "value": "shangsi", "label": "上思县" },
+          { "value": "dongxing", "label": "东兴市" }
+        ]
+      },
+      {
+        "value": "qinzhou",
+        "label": "钦州市",
+        "children": [
+          { "value": "qinnan", "label": "钦南区" },
+          { "value": "qinbei", "label": "钦北区" },
+          { "value": "lingshan", "label": "灵山县" },
+          { "value": "pubei", "label": "浦北县" }
+        ]
+      },
+      {
+        "value": "guigang",
+        "label": "贵港市",
+        "children": [
+          { "value": "gangbei", "label": "港北区" },
+          { "value": "gangnan", "label": "港南区" },
+          { "value": "tantang", "label": "覃塘区" },
+          { "value": "pingnan", "label": "平南县" },
+          { "value": "guiping", "label": "桂平市" }
+        ]
+      },
+      {
+        "value": "yulin",
+        "label": "玉林市",
+        "children": [
+          { "value": "yuzhou", "label": "玉州区" },
+          { "value": "fumian", "label": "福绵区" },
+          { "value": "rong", "label": "容县" },
+          { "value": "luchuan", "label": "陆川县" },
+          { "value": "bobai", "label": "博白县" },
+          { "value": "beiliu", "label": "北流市" }
+        ]
+      },
+      {
+        "value": "baise",
+        "label": "百色市",
+        "children": [
+          { "value": "youjiang", "label": "右江区" },
+          { "value": "tianyang", "label": "田阳区" },
+          { "value": "tiandong", "label": "田东县" },
+          { "value": "pingguo", "label": "平果市" },
+          { "value": "debao", "label": "德保县" },
+          { "value": "jingxi", "label": "靖西市" },
+          { "value": "napo", "label": "那坡县" },
+          { "value": "lingyun", "label": "凌云县" },
+          { "value": "leye", "label": "乐业县" },
+          { "value": "tianlin", "label": "田林县" },
+          { "value": "xilin", "label": "西林县" },
+          { "value": "longlin", "label": "隆林各族自治县" }
+        ]
+      },
+      {
+        "value": "hezhou",
+        "label": "贺州市",
+        "children": [
+          { "value": "babu", "label": "八步区" },
+          { "value": "pingjia", "label": "平桂区" },
+          { "value": "zhaoping", "label": "昭平县" },
+          { "value": "zhongshan", "label": "钟山县" },
+          { "value": "fuchuan", "label": "富川瑶族自治县" }
+        ]
+      },
+      {
+        "value": "hechi",
+        "label": "河池市",
+        "children": [
+          { "value": "jinchengjiang", "label": "金城江区" },
+          { "value": "yizhou", "label": "宜州区" },
+          { "value": "nandan", "label": "南丹县" },
+          { "value": "tian", "label": "天峨县" },
+          { "value": "fengshan", "label": "凤山县" },
+          { "value": "donglan", "label": "东兰县" },
+          { "value": "luocheng", "label": "罗城仫佬族自治县" },
+          { "value": "huanjiang", "label": "环江毛南族自治县" },
+          { "value": "bama", "label": "巴马瑶族自治县" },
+          { "value": "dahua", "label": "大化瑶族自治县" }
+        ]
+      },
+      {
+        "value": "laibin",
+        "label": "来宾市",
+        "children": [
+          { "value": "xingbin", "label": "兴宾区" },
+          { "value": "xincheng", "label": "忻城县" },
+          { "value": "xiangzhou", "label": "象州县" },
+          { "value": "wuxuan", "label": "武宣县" },
+          { "value": "jinxiu", "label": "金秀瑶族自治县" },
+          { "value": "heshan", "label": "合山市" }
+        ]
+      },
+      {
+        "value": "chongzuo",
+        "label": "崇左市",
+        "children": [
+          { "value": "jiangzhou", "label": "江州区" },
+          { "value": "fusui", "label": "扶绥县" },
+          { "value": "ningming", "label": "宁明县" },
+          { "value": "longzhou", "label": "龙州县" },
+          { "value": "daxin", "label": "大新县" },
+          { "value": "tiandeng", "label": "天等县" },
+          { "value": "pingxiang", "label": "凭祥市" }
+        ]
+      }
+    ]
+  }
+] 

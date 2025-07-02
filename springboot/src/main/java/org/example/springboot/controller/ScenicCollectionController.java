@@ -67,4 +67,22 @@ public class ScenicCollectionController {
         List<Long> ids = scenicCollectionService.getUserCollectionIds(userId);
         return Result.success(ids);
     }
+
+    @Operation(summary = "管理员查询所有景点收藏")
+    @GetMapping("/admin/page")
+    public Result<?> getAdminCollectionList(
+            @RequestParam(defaultValue = "") String username,
+            @RequestParam(defaultValue = "") String scenicName,
+            @RequestParam(defaultValue = "1") Integer currentPage,
+            @RequestParam(defaultValue = "10") Integer size) {
+        Page<ScenicCollection> page = scenicCollectionService.getCollectionsByAdmin(username, scenicName, currentPage, size);
+        return Result.success(page);
+    }
+    
+    @Operation(summary = "管理员删除景点收藏")
+    @DeleteMapping("/admin/{id}")
+    public Result<?> deleteCollection(@PathVariable Long id) {
+        scenicCollectionService.deleteCollection(id);
+        return Result.success("删除成功");
+    }
 } 

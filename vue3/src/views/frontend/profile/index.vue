@@ -37,7 +37,7 @@
                   <div class="avatar-section">
                     <div class="avatar-card">
                       <div class="avatar-wrapper">
-                        <el-avatar :size="120" :src="avatarUrl" class="user-avatar">
+                        <el-avatar :size="120" :src="avatarUrl" class="user-avatar" @error="handleAvatarError">
                           <span class="avatar-fallback">{{ userForm.nickname?.charAt(0) || userForm.username?.charAt(0) || '用' }}</span>
                         </el-avatar>
                         <div class="avatar-overlay">
@@ -245,8 +245,14 @@ const userForm = reactive({
 
 // 头像地址
 const avatarUrl = computed(() => {
-  return baseAPI + userForm.avatar;
+  if (!userForm.avatar) return require('@/assets/images/no-image.png')
+  return userForm.avatar.startsWith('http') ? userForm.avatar : baseAPI + '/img/' + userForm.avatar.replace(/^\/img\//, '')
 });
+
+// 头像加载错误处理
+const handleAvatarError = () => {
+  userForm.avatar = ''
+}
 
 // 密码表单数据
 const passwordForm = reactive({
@@ -373,15 +379,16 @@ const customUploadAvatar = async (options) => {
       // 自定义错误消息
       errorMsg: "头像上传失败",
       // 成功回调
-      onSuccess: async (data) => {
+      onSuccess: async (response) => {
         // 更新用户头像
-        userForm.avatar = data;
+        const avatarPath = response.data
+        userForm.avatar = avatarPath;
 
         // 保存到后端
-        await updateUserAvatar(data);
+        await updateUserAvatar(avatarPath);
 
         // 通知上传成功
-        options.onSuccess({ data });
+        options.onSuccess();
       },
       // 错误回调
       onError: (error) => {

@@ -49,7 +49,4 @@ public class Collection {
     @TableField(exist = false)
     @Schema(description = "用户头像")
     private String userAvatar;
-
-    @Schema(description = "收藏的景点ID")
-    private Long scenicId;
 } 

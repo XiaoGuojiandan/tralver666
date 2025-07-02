@@ -7,15 +7,18 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.example.springboot.entity.Comment;
+import org.example.springboot.entity.CommentLike;
 import org.example.springboot.entity.ScenicSpot;
 import org.example.springboot.entity.User;
 import org.example.springboot.exception.ServiceException;
 import org.example.springboot.mapper.AccommodationReviewMapper;
+import org.example.springboot.mapper.CommentLikeMapper;
 import org.example.springboot.mapper.CommentMapper;
 import org.example.springboot.mapper.FoodCommentMapper;
 import org.example.springboot.mapper.ScenicSpotMapper;
 import org.example.springboot.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +42,9 @@ public class CommentService extends ServiceImpl<CommentMapper, Comment> implemen
 
     @Resource
     private AccommodationReviewMapper accommodationReviewMapper;
+
+    @Resource
+    private CommentLikeMapper commentLikeMapper;
 
     public Page<Comment> getCommentsByPage(Long targetId, String scenicName, String userName, String content, Integer currentPage, Integer size) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
@@ -108,10 +114,19 @@ public class CommentService extends ServiceImpl<CommentMapper, Comment> implemen
         if (commentMapper.insert(comment) <= 0) throw new ServiceException("评论失败");
     }
 
+    @Transactional
     public void deleteComment(Long id, Long userId, boolean isAdmin) {
         Comment comment = commentMapper.selectById(id);
         if (comment == null) throw new ServiceException("评论不存在");
         if (!isAdmin && !comment.getUserId().equals(userId)) throw new ServiceException("无权删除");
+        
+        // 先删除相关的点赞记录
+        commentLikeMapper.delete(
+            new LambdaQueryWrapper<CommentLike>()
+                .eq(CommentLike::getCommentId, id)
+        );
+        
+        // 再删除评论
         if (commentMapper.deleteById(id) <= 0) throw new ServiceException("删除失败");
     }
 

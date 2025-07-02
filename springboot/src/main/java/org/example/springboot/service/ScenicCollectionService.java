@@ -9,10 +9,12 @@ import org.example.springboot.entity.User;
 import org.example.springboot.exception.ServiceException;
 import org.example.springboot.mapper.ScenicCollectionMapper;
 import org.example.springboot.mapper.ScenicSpotMapper;
+import org.example.springboot.mapper.UserMapper;
 import org.example.springboot.util.JwtTokenUtils;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,6 +32,9 @@ public class ScenicCollectionService {
     
     @Resource
     private ScenicSpotMapper scenicSpotMapper;
+    
+    @Resource
+    private UserMapper userMapper;
     
     @Resource
     private ScenicSpotService scenicSpotService;
@@ -200,27 +205,133 @@ public class ScenicCollectionService {
                 .map(ScenicCollection::getScenicId)
                 .collect(Collectors.toList());
                 
-        logger.info("开始填充景点信息, scenicIds={}", scenicIds);
-        
         // 批量查询景点信息
-        List<ScenicSpot> scenicSpots = scenicSpotService.getScenicSpotsByIds(scenicIds);
-        logger.info("查询到景点数量: {}", scenicSpots.size());
+        LambdaQueryWrapper<ScenicSpot> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(ScenicSpot::getId, scenicIds);
+        List<ScenicSpot> scenicSpots = scenicSpotMapper.selectList(queryWrapper);
         
-        // 转换为Map便于查找
+        // 构建景点ID到景点信息的映射
         Map<Long, ScenicSpot> scenicSpotMap = scenicSpots.stream()
                 .collect(Collectors.toMap(ScenicSpot::getId, spot -> spot));
                 
         // 填充景点信息
         collections.forEach(collection -> {
-            ScenicSpot spot = scenicSpotMap.get(collection.getScenicId());
-            if (spot != null) {
-                collection.setScenicSpot(spot);
-                logger.debug("填充景点信息成功: collectionId={}, scenicName={}", 
-                           collection.getId(), spot.getName());
+            ScenicSpot scenicSpot = scenicSpotMap.get(collection.getScenicId());
+            if (scenicSpot != null) {
+                collection.setScenicSpot(scenicSpot);
+                collection.setScenicName(scenicSpot.getName());
+                collection.setScenicImage(scenicSpot.getImageUrl());
             } else {
-                logger.warn("未找到对应的景点信息: collectionId={}, scenicId={}", 
-                          collection.getId(), collection.getScenicId());
+                logger.warn("未找到景点信息: scenicId={}", collection.getScenicId());
             }
         });
+        
+        logger.info("成功填充{}条景点信息", scenicSpots.size());
+    }
+
+    /**
+     * 管理员查询所有收藏
+     */
+    public Page<ScenicCollection> getCollectionsByAdmin(String username, String scenicName, Integer currentPage, Integer size) {
+        // 首先获取符合条件的用户
+        List<Long> userIds = new ArrayList<>();
+        if (StringUtils.hasText(username)) {
+            LambdaQueryWrapper<User> userQuery = new LambdaQueryWrapper<>();
+            userQuery.like(User::getUsername, username);
+            List<User> users = userMapper.selectList(userQuery);
+            if (!users.isEmpty()) {
+                userIds = users.stream().map(User::getId).collect(Collectors.toList());
+            } else {
+                // 如果没找到用户，直接返回空结果
+                return new Page<>(currentPage, size);
+            }
+        }
+        
+        // 查询符合条件的景点
+        List<Long> scenicIds = new ArrayList<>();
+        if (StringUtils.hasText(scenicName)) {
+            LambdaQueryWrapper<ScenicSpot> scenicQuery = new LambdaQueryWrapper<>();
+            scenicQuery.like(ScenicSpot::getName, scenicName);
+            List<ScenicSpot> scenics = scenicSpotMapper.selectList(scenicQuery);
+            if (!scenics.isEmpty()) {
+                scenicIds = scenics.stream().map(ScenicSpot::getId).collect(Collectors.toList());
+            } else {
+                // 如果没找到景点，直接返回空结果
+                return new Page<>(currentPage, size);
+            }
+        }
+        
+        // 构建查询条件
+        LambdaQueryWrapper<ScenicCollection> queryWrapper = new LambdaQueryWrapper<>();
+        if (!userIds.isEmpty()) {
+            queryWrapper.in(ScenicCollection::getUserId, userIds);
+        }
+        if (!scenicIds.isEmpty()) {
+            queryWrapper.in(ScenicCollection::getScenicId, scenicIds);
+        }
+        
+        queryWrapper.orderByDesc(ScenicCollection::getCreateTime);
+        Page<ScenicCollection> page = scenicCollectionMapper.selectPage(new Page<>(currentPage, size), queryWrapper);
+        
+        // 填充景点和用户信息
+        fillScenicAndUserInfo(page.getRecords());
+        
+        return page;
+    }
+    
+    /**
+     * 管理员删除收藏
+     */
+    public void deleteCollection(Long id) {
+        if (scenicCollectionMapper.deleteById(id) <= 0) {
+            throw new ServiceException("删除收藏失败");
+        }
+    }
+    
+    /**
+     * 填充景点和用户信息
+     */
+    private void fillScenicAndUserInfo(List<ScenicCollection> collections) {
+        if (collections.isEmpty()) {
+            return;
+        }
+        
+        // 获取所有用户ID和景点ID
+        List<Long> userIds = collections.stream()
+                .map(ScenicCollection::getUserId)
+                .distinct()
+                .collect(Collectors.toList());
+                
+        List<Long> scenicIds = collections.stream()
+                .map(ScenicCollection::getScenicId)
+                .distinct()
+                .collect(Collectors.toList());
+        
+        // 批量查询用户和景点信息
+        Map<Long, User> userMap = userMapper.selectBatchIds(userIds)
+                .stream()
+                .collect(Collectors.toMap(User::getId, user -> user));
+                
+        Map<Long, ScenicSpot> scenicMap = scenicSpotMapper.selectBatchIds(scenicIds)
+                .stream()
+                .collect(Collectors.toMap(ScenicSpot::getId, scenic -> scenic));
+        
+        // 填充信息
+        for (ScenicCollection collection : collections) {
+            // 填充用户信息
+            User user = userMap.get(collection.getUserId());
+            if (user != null) {
+                collection.setUsername(user.getUsername());
+                collection.setUserNickname(user.getNickname());
+                collection.setUserAvatar(user.getAvatar());
+            }
+            
+            // 填充景点信息
+            ScenicSpot scenic = scenicMap.get(collection.getScenicId());
+            if (scenic != null) {
+                collection.setScenicName(scenic.getName());
+                collection.setScenicImage(scenic.getImageUrl());
+            }
+        }
     }
 } 

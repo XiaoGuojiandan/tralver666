@@ -67,16 +67,22 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 配置图片资源的访问路径
+        String imgLocation = "file:" + System.getProperty("user.dir") + "/files/img/";
         registry.addResourceHandler("/api/img/**", "/img/**")
-                .addResourceLocations("file:springboot/files/img/");
+                .addResourceLocations(imgLocation);
+                
+        // Swagger相关资源
+        registry.addResourceHandler("doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/login", "/user/register", "/api/img/**", "/img/**",
-                        "/swagger-resources/**", "/webjars/**", "/v3/**", "/swagger-ui.html/**",
-                        "/api-docs/**", "/api-docs-ext/**");
+                .excludePathPatterns(PUBLIC_PATHS);
     }
 }

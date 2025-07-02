@@ -26,7 +26,9 @@
       <div class="info-content">
         <!-- 添加头像上传部分 -->
         <div class="avatar-container">
-          <el-avatar :size="100" :src="avatarUrl" @error="() => false" />
+          <el-avatar :size="100" :src="avatarUrl" @error="() => form.avatar = ''">
+            <span>{{ form.nickname?.charAt(0) || form.username?.charAt(0) || '用' }}</span>
+          </el-avatar>
           <el-upload
             class="avatar-uploader"
             action="#"
@@ -161,7 +163,8 @@ const form = reactive({
 
 // 头像地址
 const avatarUrl = computed(() => {
-  return form.avatar ? baseAPI + form.avatar : '';
+  if (!form.avatar) return require('@/assets/images/no-image.png')
+  return form.avatar.startsWith('http') ? form.avatar : baseAPI + form.avatar
 })
 
 // 密码表单
@@ -214,28 +217,26 @@ const passwordRules = {
   ]
 }
 
-// 获取用户信息
-const fetchUserInfo = async () => {
+// 加载用户信息
+const loadUserInfo = async () => {
   try {
-    // 获取当前用户的最新信息
-    const userId = userStore.userInfo.id
-    const res = await request.get(`/user/${userId}`, null, {
-      showDefaultMsg: false
-    })
-    
-    // 直接更新表单数据
-    form.id = res.id || userStore.userInfo.id
-    form.username = res.username || ''
-    form.nickname = res.nickname || ''
-    form.email = res.email || ''
-    form.phone = res.phone || ''
-    form.sex = res.sex || '男'
-    form.avatar = res.avatar || ''
-    
-    console.log('用户信息加载成功:', form)
+    const response = await request.get('/user/current')
+    console.log('用户信息加载成功:', response)
+    if (response.code === '200' && response.data) {
+      // 更新表单数据
+      Object.assign(form, {
+        id: response.data.id,
+        username: response.data.username,
+        nickname: response.data.nickname,
+        email: response.data.email,
+        phone: response.data.phone,
+        sex: response.data.sex,
+        avatar: response.data.avatar
+      })
+    }
   } catch (error) {
-    console.error('获取用户信息失败:', error)
-    ElMessage.error('获取用户信息失败')
+    console.error('加载用户信息失败:', error)
+    ElMessage.error('加载用户信息失败')
   }
 }
 
@@ -337,7 +338,7 @@ const handleEdit = () => {
 // 取消编辑
 const handleCancel = () => {
   isEditing.value = false
-  fetchUserInfo() // 重新获取数据，恢复原值
+  loadUserInfo() // 重新获取数据，恢复原值
 }
 
 // 保存信息
@@ -431,7 +432,7 @@ const handleChangePassword = async () => {
 }
 
 onMounted(() => {
-  fetchUserInfo()
+  loadUserInfo()
 })
 </script>
 

@@ -70,7 +70,7 @@
           <div v-else-if="topScenics.length" class="scenic-list">
             <div v-for="(scenic, index) in topScenics" :key="index" class="scenic-item">
               <div class="rank-number" :class="{'top-three': index < 3}">{{ index + 1 }}</div>
-              <el-image :src="scenic.imageUrl" fit="cover" class="scenic-image">
+              <el-image :src="getImageUrl(scenic.imageUrl)" fit="cover" class="scenic-image">
                 <template #error>
                   <div class="image-slot">
                     <el-icon><Picture /></el-icon>
@@ -102,6 +102,14 @@ import { User, Ticket, Location, Collection, ChatDotRound, ShoppingCart, Picture
 import * as echarts from 'echarts'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
+
+const baseAPI = process.env.VUE_APP_BASE_API || '/api'
+
+// 获取图片完整URL
+const getImageUrl = (url) => {
+  if (!url) return require('@/assets/images/no-image.png')
+  return url.startsWith('http') ? url : baseAPI + url
+}
 
 export default {
   name: 'Dashboard',
@@ -252,7 +260,8 @@ export default {
     return {
       loading,
       statsCards,
-      topScenics
+      topScenics,
+      getImageUrl
     }
   }
 }

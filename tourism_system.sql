@@ -11,7 +11,7 @@
  Target Server Version : 80027 (8.0.27)
  File Encoding         : 65001
 
- Date: 02/07/2025 14:47:36
+ Date: 02/07/2025 22:23:32
 */
 
 SET NAMES utf8mb4;
@@ -137,7 +137,6 @@ INSERT INTO `collection` VALUES (14, 6, 8, '2025-06-19 21:55:57');
 INSERT INTO `collection` VALUES (18, 8, 4, '2025-06-30 01:00:01');
 INSERT INTO `collection` VALUES (19, 8, 8, '2025-06-30 01:08:54');
 INSERT INTO `collection` VALUES (20, 8, 3, '2025-06-30 01:09:05');
-INSERT INTO `collection` VALUES (21, 7, 8, '2025-07-01 01:50:12');
 
 -- ----------------------------
 -- Table structure for comment
@@ -165,7 +164,6 @@ INSERT INTO `comment` VALUES (3, 4, 2, '长城很雄伟，爬起来有点累，�
 INSERT INTO `comment` VALUES (4, 2, 3, '西湖真的名不虚传，太美了，而且免费开放。', 5, 20, '2025-05-14 12:03:00');
 INSERT INTO `comment` VALUES (5, 3, 4, '黄山的日出非常壮观，住山上看日出是绝佳体验。', 5, 18, '2025-05-14 12:04:00');
 INSERT INTO `comment` VALUES (6, 4, 5, '桂林山水甲天下，确实名不虚传！', 5, 26, '2025-05-14 12:05:00');
-INSERT INTO `comment` VALUES (10, 8, 56, '喜欢1111', 5, 1, '2025-06-30 21:00:57');
 
 -- ----------------------------
 -- Table structure for comment_like
@@ -187,7 +185,6 @@ CREATE TABLE `comment_like`  (
 -- Records of comment_like
 -- ----------------------------
 INSERT INTO `comment_like` VALUES (9, 8, 6, '2025-06-30 21:06:36');
-INSERT INTO `comment_like` VALUES (10, 8, 10, '2025-06-30 21:06:41');
 
 -- ----------------------------
 -- Table structure for food
@@ -321,7 +318,7 @@ CREATE TABLE `scenic_category`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `region` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '所属区域',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1001 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '景点分类表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1002 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '景点分类表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of scenic_category
@@ -351,7 +348,7 @@ CREATE TABLE `scenic_collection`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
   INDEX `idx_scenic_id`(`scenic_id` ASC) USING BTREE,
   CONSTRAINT `scenic_collection_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '景点收藏表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '景点收藏表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of scenic_collection
@@ -359,7 +356,10 @@ CREATE TABLE `scenic_collection`  (
 INSERT INTO `scenic_collection` VALUES (9, 6, 4, '2025-06-19 21:37:42');
 INSERT INTO `scenic_collection` VALUES (10, 6, 1, '2025-06-19 21:38:51');
 INSERT INTO `scenic_collection` VALUES (12, 8, 45, '2025-06-29 12:34:01');
-INSERT INTO `scenic_collection` VALUES (13, 8, 56, '2025-06-30 01:09:12');
+INSERT INTO `scenic_collection` VALUES (16, 8, 57, '2025-07-02 21:28:45');
+INSERT INTO `scenic_collection` VALUES (17, 8, 56, '2025-07-02 22:18:14');
+INSERT INTO `scenic_collection` VALUES (18, 8, 58, '2025-07-02 22:22:07');
+INSERT INTO `scenic_collection` VALUES (19, 8, 59, '2025-07-02 22:22:13');
 
 -- ----------------------------
 -- Table structure for scenic_spot
@@ -507,7 +507,7 @@ INSERT INTO `travel_guide` VALUES (1, '北京三日游完全攻略', '<p># 北�
 INSERT INTO `travel_guide` VALUES (2, '杭州西湖一日游', '<p># 杭州西湖一日游</p><p><br></p><p>## 上午：断桥残雪 + 白堤</p><p>从断桥开始，沿着白堤漫步，欣赏西湖美景。</p><p><br></p><p>## 中午：楼外楼用餐</p><p>在楼外楼品尝正宗杭帮菜，如西湖醋鱼等特色美食。</p><p><br></p><p>## 下午：雷峰塔 + 三潭印月</p><p>参观雷峰塔，乘船游览三潭印月，感受\"西湖十景\"的魅力。</p>', 3, '/img/1748616297105.jpg', 991, '2025-05-14 13:01:00', '2025-05-30 22:44:58');
 INSERT INTO `travel_guide` VALUES (3, '黄山二日游攻略', '<p># 黄山二日游攻略</p><p><br></p><p>## 第一天：云谷寺 → 白鹅岭 → 北海景区 → 光明顶</p><p>上午从云谷寺进山，经白鹅岭到达北海景区，下午登顶光明顶，晚上入住山顶酒店。</p><p><br></p><p>## 第二天：观日出 → 西海大峡谷 → 排云亭 → 温泉</p><p>清晨观赏日出，上午游览西海大峡谷，下午经排云亭下山，可以在山脚的温泉放松身心。</p>', 4, '/img/1748616271030.jpg', 1109, '2025-05-14 13:02:00', '2025-06-29 21:34:30');
 INSERT INTO `travel_guide` VALUES (4, '桂林山水精华三日游', '<p>桂林山水精华三日游</p><p><br></p><p>第一天：象山公园 + 七星公园</p><p>游览市区内的象山公园和七星公园，感受桂林市区的山水之美。</p><p><br></p><p> 第二天：漓江精华段漂流</p><p>从桂林乘船至阳朔，欣赏漓江两岸的壮丽风光，这是桂林最精华的景观。</p><p><br></p><p>第三天：阳朔西街 + 十里画廊</p><p>上午游览阳朔西街，下午骑行或乘车游览十里画廊，欣赏田园风光。</p>', 2, '/img/1748616225252.jpg', 896, '2025-05-14 13:03:00', '2025-06-30 00:51:03');
-INSERT INTO `travel_guide` VALUES (8, '111', '<p>111</p>', 7, '/img/1748628603522.jpg', 10, '2025-05-31 02:10:05', '2025-07-01 22:45:17');
+INSERT INTO `travel_guide` VALUES (8, '111', '<p>111</p>', 7, '/img/1748628603522.jpg', 11, '2025-05-31 02:10:05', '2025-07-01 22:45:17');
 INSERT INTO `travel_guide` VALUES (10, '好吃', '<p>广西好吃好玩快来！！！！</p>', 8, '/img/1751205862557.jpg', 11, '2025-06-29 22:04:35', '2025-06-30 23:16:02');
 
 -- ----------------------------
@@ -535,13 +535,13 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, 'admin', '$2a$10$MBo2qlWlGDZayHm.eYjHdu039.w/slhLnHSWHZpzt6CBuTLhG6xe6', '管理员', 'admin@tourism.com', '13800138000', 'ADMIN', '/img/1751102492059.jpg', 1, '2025-05-14 10:00:00', '2025-06-29 22:07:09', '女');
-INSERT INTO `user` VALUES (2, 'zhangsan', '$2a$10$Qy7d8PZ47Vndpbwi9a7ZZ.GHgzdcQ4R8DYlbsUmR0d7dOTi165s.6', '张三', 'zhangsan@example.com', '13712345678', 'USER', '/img/1751215772297.jpg', 1, '2025-05-14 10:01:00', '2025-07-01 02:58:18', '男');
-INSERT INTO `user` VALUES (3, 'lisi', '$2a$10$ReTkGd2vPXJ1o6ijBm9sHOuJ0V80Cn4Qtvb7zMs3VWklHcb0mvF7q', '李四', 'lisi@example.com', '13812345679', 'USER', '/img/1751215772297.jpg', 1, '2025-05-14 10:02:00', '2025-07-01 02:58:17', '女');
-INSERT INTO `user` VALUES (4, 'wangwu', '$2a$10$whhSExzkWkHgBV9uZwed..i6LZ4tX3mPUbI2Rweo99M5q8eEQYkjq', '王五', 'wangwu@example.com', '13912345670', 'USER', '/img/1751215772297.jpg', 1, '2025-05-14 10:03:00', '2025-07-01 02:58:15', '男');
-INSERT INTO `user` VALUES (5, 'w11', '$2a$10$J4a5xpAL.Z2nDw0fS03Tv.Nnww3R1Y8kQM90Oa90REMkx58zyhxh.', '111', '11111@qq.com', '', 'USER', '/img/1751215772297.jpg', 1, '2025-05-31 01:45:50', '2025-07-01 02:58:14', '男');
-INSERT INTO `user` VALUES (6, '1796145608', '$2a$10$4/bnnP72ShMPQhs4vJtXOuivvi1TyHZwkQchu3PyFwBB7uSM17QQi', 'hh', '1796145608@qq.com', NULL, 'USER', '/img/1751215772297.jpg', 1, '2025-06-19 21:11:58', '2025-07-01 02:58:13', NULL);
-INSERT INTO `user` VALUES (7, '123123', '$2a$10$nenjbP2ZyyltXrlihN2Z.erOiy49eQfG03GHovS./zqlwchM.86LK', '123123', '1193899475@qq.com', '', 'USER', '/img/1751215772297.jpg', 1, '2025-06-28 17:06:07', '2025-07-01 02:58:11', NULL);
-INSERT INTO `user` VALUES (8, 'xiaoguo', '$2a$10$AJuSjz46Y1RAeJlwqyqYm.vwUPjgFiDYKiEMsP1uNypCFMZ9vm03W', 'xiaoguo', '1745742048@qq.com', '', 'USER', '/img/1751215772297.jpg', 1, '2025-06-28 17:22:00', '2025-06-30 00:50:59', '男');
+INSERT INTO `user` VALUES (1, 'admin', '$2a$10$MBo2qlWlGDZayHm.eYjHdu039.w/slhLnHSWHZpzt6CBuTLhG6xe6', '管理员', 'admin@tourism.com', '13800138000', 'ADMIN', '/img/1751456335178.jpg', 1, '2025-05-14 10:00:00', '2025-07-02 19:38:55', '女');
+INSERT INTO `user` VALUES (2, 'zhangsan', '$2a$10$Qy7d8PZ47Vndpbwi9a7ZZ.GHgzdcQ4R8DYlbsUmR0d7dOTi165s.6', '张三', 'zhangsan@example.com', '13712345678', 'USER', '/img/1748616225252.jpg', 1, '2025-05-14 10:01:00', '2025-07-02 15:42:41', '男');
+INSERT INTO `user` VALUES (3, 'lisi', '$2a$10$ReTkGd2vPXJ1o6ijBm9sHOuJ0V80Cn4Qtvb7zMs3VWklHcb0mvF7q', '李四', 'lisi@example.com', '13812345679', 'USER', '/img/1748616225252.jpg', 1, '2025-05-14 10:02:00', '2025-07-02 15:42:43', '女');
+INSERT INTO `user` VALUES (4, 'wangwu', '$2a$10$whhSExzkWkHgBV9uZwed..i6LZ4tX3mPUbI2Rweo99M5q8eEQYkjq', '王五', 'wangwu@example.com', '13912345670', 'USER', '/img/1748616225252.jpg', 1, '2025-05-14 10:03:00', '2025-07-02 15:42:44', '男');
+INSERT INTO `user` VALUES (5, 'w11', '$2a$10$J4a5xpAL.Z2nDw0fS03Tv.Nnww3R1Y8kQM90Oa90REMkx58zyhxh.', '111', '11111@qq.com', '', 'USER', '/img/1748616225252.jpg', 1, '2025-05-31 01:45:50', '2025-07-02 15:42:45', '男');
+INSERT INTO `user` VALUES (6, '1796145608', '$2a$10$4/bnnP72ShMPQhs4vJtXOuivvi1TyHZwkQchu3PyFwBB7uSM17QQi', 'hh', '1796145608@qq.com', NULL, 'USER', '/img/1748616225252.jpg', 1, '2025-06-19 21:11:58', '2025-07-02 15:42:45', NULL);
+INSERT INTO `user` VALUES (7, '123123', '$2a$10$nenjbP2ZyyltXrlihN2Z.erOiy49eQfG03GHovS./zqlwchM.86LK', '123123', '1193899475@qq.com', '', 'USER', '/img/1748616225252.jpg', 1, '2025-06-28 17:06:07', '2025-07-02 15:42:46', NULL);
+INSERT INTO `user` VALUES (8, 'xiaoguo', '$2a$10$AJuSjz46Y1RAeJlwqyqYm.vwUPjgFiDYKiEMsP1uNypCFMZ9vm03W', 'xiaoguo', '1745742048@qq.com', '', 'USER', '/img/1748616225252.jpg', 1, '2025-06-28 17:22:00', '2025-07-02 15:42:49', '男');
 
 SET FOREIGN_KEY_CHECKS = 1;

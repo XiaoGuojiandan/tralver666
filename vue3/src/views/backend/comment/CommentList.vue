@@ -128,7 +128,6 @@ const baseAPI = process.env.VUE_APP_BASE_API || '/api'
 const fetchComments = async () => {
   loading.value = true
   try {
-    // 构建查询参数
     const params = {
       currentPage: currentPage.value,
       size: pageSize.value
@@ -141,8 +140,8 @@ const fetchComments = async () => {
     await request.get('/comment/page', params, {
       showDefaultMsg: false,
       onSuccess: (res) => {
-        tableData.value = res.records||[]
-        total.value = res.total||0
+        tableData.value = res.records || []
+        total.value = res.total || 0
       }
     })
   } catch (error) {
@@ -198,130 +197,76 @@ onMounted(fetchComments)
     
     .page-title {
       font-size: 24px;
-      color: #34495e;
-      margin: 0 0 8px 0;
       font-weight: 500;
+      color: #1f2f3d;
+      margin: 0;
     }
     
     .page-subtitle {
       font-size: 14px;
-      color: #7f8c8d;
-      margin: 0;
-      font-style: italic;
+      color: #909399;
+      margin: 8px 0 0;
     }
   }
 
   .search-card {
     margin-bottom: 20px;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: none;
     
     .search-form {
-      padding: 10px 0;
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
+      gap: 10px;
       
       .el-form-item {
         margin-bottom: 0;
-        margin-right: 16px;
       }
       
       .search-btn {
-        background-color: #3498db;
-        border-color: #3498db;
-        
-        &:hover, &:focus {
-          background-color: #2980b9;
-          border-color: #2980b9;
-        }
-      }
-      
-      .reset-btn {
-        color: #7f8c8d;
-        border-color: #bdc3c7;
-        
-        &:hover, &:focus {
-          color: #34495e;
-          border-color: #95a5a6;
-          background-color: #f5f5f5;
-        }
+        margin-right: 10px;
       }
     }
   }
-  
+
   .table-card {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: none;
-    
     .comment-table {
-      border-radius: 4px;
-      overflow: hidden;
-      
-      :deep(thead) {
-        background-color: #ecf0f1;
-        
-        th {
-          background-color: #ecf0f1;
-          color: #34495e;
-          font-weight: 500;
-          padding: 12px 0;
-        }
-      }
-      
-      :deep(tbody tr) {
-        transition: all 0.3s;
-        
-        &:hover {
-          background-color: #f8f9fa;
-        }
-      }
+      margin-bottom: 20px;
       
       .user-info {
         display: flex;
         align-items: center;
+        gap: 10px;
         
         .user-name {
-          margin-left: 8px;
-          font-weight: 500;
+          color: #606266;
         }
       }
       
       .scenic-name {
-        color: #2980b9;
-        font-weight: 500;
+        color: #409EFF;
       }
       
       .like-info {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #e67e22;
+        color: #F56C6C;
         
         i {
-          margin-right: 5px;
-          font-size: 16px;
+          margin-right: 4px;
         }
       }
       
       .date-text {
-        color: #7f8c8d;
-        font-size: 12px;
+        color: #909399;
       }
       
       .delete-btn {
-        padding: 5px 12px;
+        padding: 4px 8px;
       }
     }
   }
 
   .pagination-container {
-    margin-top: 20px;
     display: flex;
     justify-content: flex-end;
-    padding: 0 20px;
+    margin-top: 20px;
   }
 }
 </style> 
