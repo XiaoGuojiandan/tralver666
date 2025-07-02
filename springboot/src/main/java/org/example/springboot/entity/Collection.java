@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @TableName("collection")
@@ -24,7 +24,7 @@ public class Collection {
     private Long guideId;
 
     @Schema(description = "创建时间")
-    private Date createTime;
+    private LocalDateTime createTime;
     
     @TableField(exist = false)
     @Schema(description = "攻略标题")
@@ -49,4 +49,7 @@ public class Collection {
     @TableField(exist = false)
     @Schema(description = "用户头像")
     private String userAvatar;
+
+    @Schema(description = "收藏的景点ID")
+    private Long scenicId;
 } 

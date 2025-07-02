@@ -195,4 +195,11 @@ public class ScenicSpotService {
             }
         }
     }
+
+    /**
+     * 获取景点总数
+     */
+    public long count() {
+        return scenicSpotMapper.selectCount(null);
+    }
 }

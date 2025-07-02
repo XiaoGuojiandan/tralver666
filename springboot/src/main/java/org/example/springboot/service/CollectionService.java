@@ -15,10 +15,13 @@ import org.example.springboot.util.JwtTokenUtils;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.example.springboot.entity.ScenicSpot;
+import org.example.springboot.mapper.ScenicSpotMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +36,9 @@ public class CollectionService {
     
     @Resource
     private UserMapper userMapper;
+    
+    @Resource
+    private ScenicSpotMapper scenicSpotMapper;
     
     /**
      * 添加收藏
@@ -253,5 +259,19 @@ public class CollectionService {
                 }
             }
         }
+    }
+
+    /**
+     * 获取收藏排行榜
+     */
+    public List<Map<String, Object>> getTopCollections() {
+        return collectionMapper.findTopCollectedScenic();
+    }
+
+    /**
+     * 获取收藏总数
+     */
+    public long count() {
+        return collectionMapper.selectCount(null);
     }
 } 

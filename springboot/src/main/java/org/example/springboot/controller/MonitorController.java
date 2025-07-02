@@ -5,14 +5,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.example.springboot.common.Result;
 import org.example.springboot.config.RabbitMQConfig;
+import org.example.springboot.service.*;
 import org.example.springboot.util.JwtTokenUtils;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -21,7 +21,7 @@ import java.util.Properties;
  */
 @Tag(name = "系统监控接口")
 @RestController
-@RequestMapping("/monitor")
+@RequestMapping("/api/monitor")
 public class MonitorController {
 
     @Resource
@@ -29,6 +29,19 @@ public class MonitorController {
     
     @Resource
     private RabbitTemplate rabbitTemplate;
+
+    @Resource
+    private FoodService foodService;
+    @Resource
+    private ScenicSpotService scenicSpotService;
+    @Resource
+    private UserService userService;
+    @Resource
+    private CollectionService collectionService;
+    @Resource
+    private CommentService commentService;
+    @Resource
+    private TicketOrderService ticketOrderService;
 
     /**
      * 获取队列状态信息
@@ -128,5 +141,33 @@ public class MonitorController {
         } catch (Exception e) {
             return Result.error("发送测试消息失败: " + e.getMessage());
         }
+    }
+
+    @Operation(summary = "获取系统统计数据")
+    @GetMapping("/dashboard")
+    public Result<Map<String, Object>> getDashboardStats() {
+        Map<String, Object> data = new HashMap<>();
+        
+        // 获取各种统计数据
+        data.put("totalUsers", userService.count());
+        data.put("totalFoods", foodService.count());
+        data.put("totalScenic", scenicSpotService.count());
+        data.put("totalCollections", collectionService.count());
+        data.put("totalComments", commentService.count());
+        data.put("totalOrders", ticketOrderService.count());
+        
+        // 获取近7天订单趋势
+        List<Map<String, Object>> recentOrders = ticketOrderService.getRecentOrdersStats();
+        data.put("recentOrders", recentOrders);
+        
+        // 获取热门收藏榜
+        List<Map<String, Object>> topCollections = collectionService.getTopCollections();
+        data.put("topCollections", topCollections);
+        
+        // 获取评论活跃度和热门景点排行
+        Map<String, Object> commentStats = commentService.getCommentStats();
+        data.put("commentStats", commentStats);
+        
+        return Result.success(data);
     }
 } 

@@ -467,4 +467,11 @@ public class UserService {
             return "unknown";
         }
     }
+
+    /**
+     * 获取用户总数
+     */
+    public long count() {
+        return userMapper.selectCount(null);
+    }
 }

@@ -2,22 +2,29 @@ package org.example.springboot.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.example.springboot.entity.Comment;
 import org.example.springboot.entity.ScenicSpot;
 import org.example.springboot.entity.User;
 import org.example.springboot.exception.ServiceException;
+import org.example.springboot.mapper.AccommodationReviewMapper;
 import org.example.springboot.mapper.CommentMapper;
+import org.example.springboot.mapper.FoodCommentMapper;
 import org.example.springboot.mapper.ScenicSpotMapper;
 import org.example.springboot.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @Service
-public class CommentService {
+public class CommentService extends ServiceImpl<CommentMapper, Comment> implements IService<Comment> {
     @Resource
     private CommentMapper commentMapper;
     
@@ -26,6 +33,12 @@ public class CommentService {
     
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private FoodCommentMapper foodCommentMapper;
+
+    @Resource
+    private AccommodationReviewMapper accommodationReviewMapper;
 
     public Page<Comment> getCommentsByPage(Long targetId, String scenicName, String userName, String content, Integer currentPage, Integer size) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
@@ -120,5 +133,63 @@ public class CommentService {
             new LambdaQueryWrapper<Comment>()
                 .eq(Comment::getTargetId, scenicId)
         );
+    }
+
+    /**
+     * 获取评论统计数据
+     */
+    public Map<String, Object> getCommentStats() {
+        Map<String, Object> stats = new HashMap<>();
+        
+        // 统计景点评论数（comment表中的评论）
+        long scenicComments = commentMapper.selectCount(null);
+        
+        // 统计美食评论数（food_comment表中的评论）
+        long foodComments = foodCommentMapper.selectCount(null);
+        
+        // 统计住宿评论数（accommodation_review表中的评论）
+        long accommodationComments = accommodationReviewMapper.selectCount(null);
+        
+        // 计算总评论数
+        long totalComments = scenicComments + foodComments + accommodationComments;
+        
+        // 计算各类型评论的活跃度（百分比）
+        stats.put("scenic", calculatePercentage(scenicComments, totalComments));
+        stats.put("food", calculatePercentage(foodComments, totalComments));
+        stats.put("accommodation", calculatePercentage(accommodationComments, totalComments));
+        
+        // 获取热门景点排行
+        List<Map<String, Object>> topScenics = scenicSpotMapper.getTopScenicSpots()
+            .stream()
+            .map(spot -> {
+                Map<String, Object> scenicData = new HashMap<>();
+                scenicData.put("name", spot.get("name"));
+                scenicData.put("imageUrl", spot.get("image_url"));
+                scenicData.put("rating", spot.get("rating"));
+                scenicData.put("collectionCount", spot.get("collection_count"));
+                scenicData.put("orderCount", spot.get("order_count"));
+                scenicData.put("totalCount", spot.get("total_count"));
+                return scenicData;
+            })
+            .collect(Collectors.toList());
+        
+        stats.put("topScenics", topScenics);
+        
+        return stats;
+    }
+
+    /**
+     * 获取评论总数
+     */
+    public long count() {
+        return commentMapper.selectCount(null);
+    }
+    
+    /**
+     * 计算百分比
+     */
+    private double calculatePercentage(long part, long total) {
+        if (total == 0) return 0;
+        return Math.round((double) part / total * 100);
     }
 } 

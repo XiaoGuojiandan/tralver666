@@ -2,6 +2,8 @@ package org.example.springboot.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.example.springboot.DTO.OrderMessageDTO;
@@ -19,8 +21,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.time.LocalDate;
 
 @Service
 public class TicketOrderService {
@@ -459,5 +467,37 @@ public class TicketOrderService {
             // 记录异常但不影响主流程
 //            LOGGER.error("发送订单消息失败: {}", e.getMessage(), e);
         }
+    }
+
+    /**
+     * 获取最近7天的订单统计
+     */
+    public List<Map<String, Object>> getRecentOrdersStats() {
+        // 获取最近7天的日期
+        List<Map<String, Object>> result = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+        
+        for (int i = 6; i >= 0; i--) {
+            LocalDate date = today.minusDays(i);
+            String formattedDate = date.format(formatter);
+            
+            // 获取当天订单数
+            long count = ticketOrderMapper.getOrderCountByDate(date);
+            
+            Map<String, Object> dayData = new HashMap<>();
+            dayData.put("date", formattedDate);
+            dayData.put("count", count);
+            result.add(dayData);
+        }
+        
+        return result;
+    }
+
+    /**
+     * 获取订单总数
+     */
+    public long count() {
+        return ticketOrderMapper.selectCount(null);
     }
 } 

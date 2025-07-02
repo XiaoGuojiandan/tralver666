@@ -348,8 +348,14 @@ public class SmartMatchService {
                 
                 LambdaQueryWrapper<ScenicSpot> spotWrapper = new LambdaQueryWrapper<>();
                 spotWrapper.eq(ScenicSpot::getCategoryId, categoryId);
-                scenicSpots = scenicSpotMapper.selectList(spotWrapper);
-                log.info("根据分类ID找到{}个景点", scenicSpots.size());
+                List<ScenicSpot> categorySpots = scenicSpotMapper.selectList(spotWrapper);
+                log.info("根据分类ID找到{}个景点", categorySpots.size());
+                
+                // 填充分类信息
+                for (ScenicSpot spot : categorySpots) {
+                    spot.setCategoryInfo(category);
+                }
+                scenicSpots.addAll(categorySpots);
             }
         }
         
@@ -357,12 +363,28 @@ public class SmartMatchService {
         if (scenicSpots.isEmpty()) {
             log.info("使用关键词进行内容匹配搜索");
             for (String keyword : searchKeywords) {
-                List<ScenicSpot> keywordSpots = scenicSpotMapper.findByKeywordWithCategory(keyword);
+                LambdaQueryWrapper<ScenicSpot> spotWrapper = new LambdaQueryWrapper<>();
+                spotWrapper.like(ScenicSpot::getName, keyword)
+                    .or()
+                    .like(ScenicSpot::getDescription, keyword)
+                    .or()
+                    .like(ScenicSpot::getLocation, keyword);
+                List<ScenicSpot> keywordSpots = scenicSpotMapper.selectList(spotWrapper);
                 scenicSpots.addAll(keywordSpots);
             }
             // 去重
             scenicSpots = new ArrayList<>(new LinkedHashSet<>(scenicSpots));
             log.info("通过关键词匹配找到{}个景点", scenicSpots.size());
+            
+            // 填充分类信息
+            for (ScenicSpot spot : scenicSpots) {
+                if (spot.getCategoryId() != null) {
+                    ScenicCategory category = scenicCategoryMapper.selectById(spot.getCategoryId());
+                    if (category != null) {
+                        spot.setCategoryInfo(category);
+                    }
+                }
+            }
         }
         
         // 3. 查找相关美食
@@ -385,15 +407,13 @@ public class SmartMatchService {
         // 5. 获取相关城市
         Set<String> relatedCities = new HashSet<>();
         for (ScenicSpot spot : scenicSpots) {
-            String city = extractAreaAndCity(spot.getLocation());
-            if (city != null) {
-                relatedCities.add(city);
+            if (spot.getCity() != null) {
+                relatedCities.add(spot.getCity());
             }
         }
         for (Food food : foods) {
-            String city = extractAreaAndCity(food.getLocation());
-            if (city != null) {
-                relatedCities.add(city);
+            if (food.getCity() != null) {
+                relatedCities.add(food.getCity());
             }
         }
         log.info("相关城市: {}", relatedCities);
@@ -543,21 +563,26 @@ public class SmartMatchService {
     private List<TravelGuide> findMatchingGuides(String query, Set<String> keywords, Set<String> cities) {
         log.info("开始查找匹配的攻略，查询词: {}, 关键词: {}, 城市: {}", query, keywords, cities);
         
-        List<TravelGuide> guides = travelGuideMapper.selectList(null).stream()
+        // 1. 获取所有攻略
+        List<TravelGuide> guides = travelGuideMapper.selectList(null);
+        log.info("找到{}个攻略", guides.size());
+        
+        // 2. 计算每个攻略的匹配分数
+        List<Map.Entry<TravelGuide, Double>> scoredGuides = guides.stream()
             .map(guide -> {
                 double score = 0.0;
                 
-                // 1. 标题匹配
+                // 2.1 标题匹配
                 if (guide.getTitle() != null) {
                     score += calculateContentMatchScore(guide.getTitle(), query, keywords) * 2.0;
                 }
                 
-                // 2. 内容匹配
+                // 2.2 内容匹配
                 if (guide.getContent() != null) {
                     score += calculateContentMatchScore(guide.getContent(), query, keywords);
                 }
                 
-                // 3. 地域相关性
+                // 2.3 地域相关性
                 for (String city : cities) {
                     if ((guide.getTitle() != null && guide.getTitle().contains(city)) ||
                         (guide.getContent() != null && guide.getContent().contains(city))) {
@@ -566,67 +591,59 @@ public class SmartMatchService {
                     }
                 }
                 
-                // 4. 时间衰减因子（新的攻略得分更高）
+                // 2.4 时间衰减因子（新的攻略得分更高）
                 if (guide.getCreateTime() != null) {
                     long daysDiff = (System.currentTimeMillis() - guide.getCreateTime().getTime()) / (1000 * 60 * 60 * 24);
                     double timeFactor = Math.exp(-daysDiff / 365.0); // 一年的衰减因子
                     score *= (0.7 + 0.3 * timeFactor); // 保留70%的基础分数
                 }
                 
-                log.debug("攻略评分计算 - ID: {}, 标题: {}, 得分: {}", guide.getId(), guide.getTitle(), score);
                 return new AbstractMap.SimpleEntry<>(guide, score);
             })
             .filter(entry -> entry.getValue() > 0)
             .sorted(Map.Entry.<TravelGuide, Double>comparingByValue().reversed())
+            .collect(Collectors.toList());
+            
+        // 3. 获取前10个最相关的攻略
+        List<TravelGuide> matchedGuides = scoredGuides.stream()
+            .limit(10)
             .map(Map.Entry::getKey)
             .collect(Collectors.toList());
-
-        log.info("找到匹配的攻略数量: {}", guides.size());
-
-        // 填充用户信息
-        if (!guides.isEmpty()) {
-            // 1. 收集所有非空的用户ID
-            List<Long> userIds = guides.stream()
+            
+        // 4. 填充用户信息
+        if (!matchedGuides.isEmpty()) {
+            // 4.1 获取所有涉及的用户ID
+            Set<Long> userIds = matchedGuides.stream()
                 .map(TravelGuide::getUserId)
-                .filter(userId -> userId != null)
-                .distinct()
-                .collect(Collectors.toList());
-            
-            log.info("需要查询的用户ID列表: {}", userIds);
-            
-            // 2. 批量查询用户信息
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+                
+            // 4.2 批量查询用户信息
+            Map<Long, User> userMap = new HashMap<>();
             if (!userIds.isEmpty()) {
-                List<User> users = userMapper.selectBatchIds(userIds);
-                log.info("查询到的用户数量: {}", users.size());
-                
-                Map<Long, User> userMap = users.stream()
-                    .collect(Collectors.toMap(User::getId, user -> user));
-                
-                // 3. 填充用户信息
-                for (TravelGuide guide : guides) {
-                    log.info("处理攻略 - ID: {}, 标题: {}, 用户ID: {}", guide.getId(), guide.getTitle(), guide.getUserId());
-                    if (guide.getUserId() != null) {
-                        User user = userMap.get(guide.getUserId());
-                        if (user != null) {
-                            guide.setUserNickname(user.getNickname());
-                            guide.setUserAvatar(user.getAvatar());
-                            log.info("设置用户信息 - 攻略ID: {}, 用户昵称: {}, 用户头像: {}", 
-                                guide.getId(), user.getNickname(), user.getAvatar());
-                        } else {
-                            log.warn("未找到用户信息 - 攻略ID: {}, 用户ID: {}", guide.getId(), guide.getUserId());
-                        }
-                    } else {
-                        log.warn("攻略没有关联用户ID - 攻略ID: {}", guide.getId());
-                    }
-                }
-            } else {
-                log.warn("没有找到需要查询的用户ID");
+                LambdaQueryWrapper<User> userWrapper = new LambdaQueryWrapper<>();
+                userWrapper.in(User::getId, userIds);
+                List<User> users = userMapper.selectList(userWrapper);
+                userMap = users.stream().collect(Collectors.toMap(User::getId, user -> user));
             }
-        } else {
-            log.warn("没有找到匹配的攻略");
+            
+            // 4.3 填充用户信息
+            for (TravelGuide guide : matchedGuides) {
+                if (guide.getUserId() != null && userMap.containsKey(guide.getUserId())) {
+                    User user = userMap.get(guide.getUserId());
+                    guide.setUserNickname(user.getNickname());
+                    guide.setUserAvatar(user.getAvatar());
+                    log.info("攻略 {} 设置用户信息: nickname={}, avatar={}", 
+                        guide.getId(), guide.getUserNickname(), guide.getUserAvatar());
+                } else {
+                    guide.setUserNickname("游客");
+                    guide.setUserAvatar(null);
+                    log.info("攻略 {} 未找到用户信息或用户ID为空", guide.getId());
+                }
+            }
         }
-
-        return guides;
+        
+        return matchedGuides;
     }
 
     private void enrichUserInfo(Map<String, Object> result) {

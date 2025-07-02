@@ -56,4 +56,16 @@ public class Comment {
     @Schema(description = "景点名称")
     @TableField(exist = false)
     private String scenicName;
+
+    @Schema(description = "评论类型：scenic-景点, food-美食, accommodation-住宿")
+    private String type;
+
+    @Schema(description = "更新时间")
+    private LocalDateTime updateTime;
+
+    @Schema(description = "点赞数")
+    private Integer likeCount;
+
+    @Schema(description = "是否删除")
+    private Boolean isDeleted;
 } 

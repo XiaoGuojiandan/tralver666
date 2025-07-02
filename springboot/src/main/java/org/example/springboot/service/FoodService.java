@@ -198,9 +198,15 @@ public class FoodService {
     public List<Food> getFoodByCategory(Long categoryId, int limit) {
         LambdaQueryWrapper<Food> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Food::getCategoryId, categoryId)
-               .orderByDesc(Food::getCreateTime)
-               .last("LIMIT " + limit);
-        
+                .orderByDesc(Food::getCreateTime)
+                .last("LIMIT " + limit);
         return foodMapper.selectList(wrapper);
+    }
+
+    /**
+     * 获取美食总数
+     */
+    public long count() {
+        return foodMapper.selectCount(null);
     }
 } 

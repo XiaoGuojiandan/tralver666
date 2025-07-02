@@ -3,8 +3,10 @@ package org.example.springboot.config;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -42,16 +44,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Resource
     private JwtInterceptor jwtInterceptor;
 
-
-
-    /**
-     * 配置路径匹配规则
-     * 为所有带有@RestController注解的控制器类添加统一的路径前缀
-     * 这样可以将API接口与其他Web资源区分开
-     *
-     * @param configurer 路径匹配配置器
-     */
-
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         // 为带有RestController注解的类添加"/api"路径前缀
@@ -63,13 +55,28 @@ public class WebConfig implements WebMvcConfigurer {
         );
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowCredentials(true)
+                .maxAge(3600)
+                .allowedHeaders("*");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/api/img/**", "/img/**")
+                .addResourceLocations("file:springboot/files/img/");
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 配置JWT拦截器
         registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns(API_PREFIX + "/**")    // 拦截所有API请求
-                .excludePathPatterns("/api/**")
-                .excludePathPatterns(PUBLIC_PATHS);     // 排除公开接口
+                .addPathPatterns("/**")
+                .excludePathPatterns("/user/login", "/user/register", "/api/img/**", "/img/**",
+                        "/swagger-resources/**", "/webjars/**", "/v3/**", "/swagger-ui.html/**",
+                        "/api-docs/**", "/api-docs-ext/**");
     }
 }
